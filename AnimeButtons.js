@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     1.03
+// @version     1.04
 // @grant       none
 // @namespace https://greasyfork.org/users/18375
 // ==/UserScript==
@@ -56,16 +56,7 @@ function main() {
         animeName = getAnimeName();
     }
     else if (document.location.host == "myanimelist.net") {
-        var englName = header.children[1];
-
-        if (englName) {
-            englName.remove();
-            animeName = getAnimeName();
-            header.appendChild(englName);
-        }
-        else {
-            animeName = getAnimeName();
-        }
+        animeName = header.childNodes[0].nodeValue;
     }
     else if (document.location.host == "anilist.co") {
         animeName = getAnimeName();
