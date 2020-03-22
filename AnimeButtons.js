@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     1.02
+// @version     1.03
 // @grant       none
 // @namespace https://greasyfork.org/users/18375
 // ==/UserScript==
@@ -43,7 +43,7 @@ else if (host == "anilist.co") {
     getAlHeader();
 }
 
-function getHeader(atr){
+function getHeader(atr) {
     return document.querySelector(atr);
 }
 
@@ -72,7 +72,7 @@ function main() {
     }
 
 
-    function getAnimeName(){
+    function getAnimeName() {
         return header.textContent.trim();
     }
 
@@ -96,8 +96,8 @@ function main() {
     var searchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
     var title = "Search MyAnimeList";
 
-    var malButt = creteButton(icon, searchUrl, title);
-    
+    var malButton = creteButton(icon, searchUrl, title);
+
 
 
     //Anilist Button
@@ -105,7 +105,7 @@ function main() {
     searchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
     title = "Search Anilist";
 
-    var alButt = creteButton(icon, searchUrl, title);
+    var alButton = creteButton(icon, searchUrl, title);
 
 
 
@@ -131,7 +131,7 @@ function main() {
     searchUrl = 'https://www.google.bg/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
     title = "Search with Google Images";
 
-    var giButt = creteButton(icon, searchUrl, title);
+    var giButton = creteButton(icon, searchUrl, title);
 
 
 
@@ -140,30 +140,31 @@ function main() {
     searchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
     title = "Search Nyaa";
 
-    var nyButt = creteButton(icon, searchUrl, title);
+    var nyButton = creteButton(icon, searchUrl, title);
 
 
 
     //Add Website Buttons
 
     if (document.location.host == "www.anime-planet.com") {
-        appendButtons(malButt, alButt);
+        appendButtons([malButton, alButton]);
     }
     else if (document.location.host == "anilist.co") {
-        appendButtons(malButt, apButton);
+        appendButtons([malButton, apButton]);
     }
     else if (document.location.host == "myanimelist.net") {
-        appendButtons(apButton, alButt);
+        appendButtons([apButton, alButton]);
     }
 
 
-    function appendButtons(butt, butt2) {
+    function appendButtons(buttonsArray) {
         header.appendChild(document.createTextNode(" "));
-        header.appendChild(butt);
-        header.appendChild(butt2);
-        header.appendChild(ytButton);
-        header.appendChild(giButt);
-        header.appendChild(nyButt);
+
+        const otherButtons = [ytButton, giButton, nyButton];
+        const allButtons = buttonsArray.concat(otherButtons);
+        allButtons.forEach(btn => {
+            header.appendChild(btn);
+        });
     }
 
 }
