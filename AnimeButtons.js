@@ -56,16 +56,7 @@ function main() {
         animeName = getAnimeName();
     }
     else if (document.location.host == "myanimelist.net") {
-        var englName = header.children[1];
-
-        if (englName) {
-            englName.remove();
-            animeName = getAnimeName();
-            header.appendChild(englName);
-        }
-        else {
-            animeName = getAnimeName();
-        }
+        animeName = header.childNodes[0].nodeValue;
     }
     else if (document.location.host == "anilist.co") {
         animeName = getAnimeName();
