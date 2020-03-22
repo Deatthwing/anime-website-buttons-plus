@@ -18,7 +18,7 @@
 //Find h1
 var header;
 var host = document.location.host;
-
+    
 if (host == "www.anime-planet.com") {
     header = getHeader("#siteContainer h1");
     main();
