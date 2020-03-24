@@ -485,7 +485,7 @@ function main() {
         var title = createHTMLElement('h3', 'Title', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
         var titleInput = createHTMLElement('input', null, 'titleInput', [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style }]);
         var URLTitle = createHTMLElement('h3', 'Search URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
-        var URLDescr = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below.', null, [{ n: 'style', v: style + 'margin-left: 15px;margin-right: 15px;font-size: 90%;font-family: monospace;' }]);
+        var URLDescr = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', null, [{ n: 'style', v: style + 'margin-left: 15px;margin-right: 15px;font-size: 90%;font-family: monospace;' }]);
         var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
         var iconTitle = createHTMLElement('h3', 'Icon URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
         var iconDescr = createHTMLElement('div', null, null, [{ n: 'style', v: style + 'margin-left: 15px;margin-right: 15px;font-size: 90%;font-family: monospace;' }]);
