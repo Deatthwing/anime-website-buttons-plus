@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.01
+// @version     2.02
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
@@ -362,7 +362,7 @@ function main() {
             if (iconField.value === '') {
                 var regex = /(?:https?:\/\/)(w{0,3}\.?\w+\.\w+)\//;
 
-                if (regex.test(iconField.value)) {
+                if (regex.test(searchField.value)) {
                     iconField.value = `https://www.google.com/s2/favicons?domain=${searchField.value.match(regex)[1]}`;
                 }
             }
