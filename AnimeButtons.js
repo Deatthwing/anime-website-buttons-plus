@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.00
+// @version     2.01
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
