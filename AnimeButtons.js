@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.1
+// @version     2.102
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
@@ -78,7 +78,15 @@ function main() {
 
 
     function creteButton(icon, searchUrl, title, isStock) {
-        var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }, { n: 'src', v: icon }]);
+        var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }]);
+
+        if (icon) {
+            buttImg.src = icon;
+        }
+        else {
+            buttImg.src = getIconUrl(searchUrl);
+        }
+
         var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${makeButtonId(title)}` },
         { n: 'href', v: searchUrl }, { n: 'target', v: "_blank" }, { n: 'title', v: title }]);
 
@@ -94,7 +102,7 @@ function main() {
     var buttonCounter = 0;
 
     //MAL Button
-    var icon = 'https://myanimelist.net/favicon.ico';
+    var icon = ''; 
     var searchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
     var title = "Search MyAnimeList";
 
@@ -102,7 +110,6 @@ function main() {
 
 
     //Anilist Button
-    icon = 'https://www.google.com/s2/favicons?domain=anilist.co';
     searchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
     title = "Search Anilist";
 
@@ -110,7 +117,6 @@ function main() {
 
 
     //Anime-Planet Button
-    icon = 'https://www.anime-planet.com/favicon.ico';
     searchUrl = 'https://www.anime-planet.com/anime/all?name=' + animeName;
     title = "Search Anime-Planet";
 
@@ -118,7 +124,6 @@ function main() {
 
 
     //YouTube Button
-    icon = 'https://www.google.com/s2/favicons?domain=youtube.com';
     searchUrl = 'https://www.youtube.com/results?search_query=' + animeName + " trailer";
     title = 'YouTube Trailer';
 
@@ -126,15 +131,13 @@ function main() {
 
 
     //Google Images button
-    icon = 'https://www.google.com/s2/favicons?domain=www.google.com/';
-    searchUrl = 'https://www.google.bg/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
+    searchUrl = 'https://www.google.com/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
     title = "Search with Google Images";
 
     var giButton = creteButton(icon, searchUrl, title, true);
 
 
     //Nyaa button
-    icon = 'https://www.google.com/s2/favicons?domain=nyaa.si/';
     searchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
     title = "Search Nyaa";
 
@@ -142,7 +145,6 @@ function main() {
 
 
     //KissAnime button
-    icon = 'https://www.google.com/s2/favicons?domain=kissanime.ru/';
     searchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
     title = "Search KissAnime";
 
@@ -385,11 +387,7 @@ function main() {
         }
         else {
             if (iconField.value === '') {
-                var regex = /(?:https?:\/\/)(w{0,3}\.?\w+\.\w+)\//;
-
-                if (regex.test(searchField.value)) {
-                    iconField.value = `https://www.google.com/s2/favicons?domain=${searchField.value.match(regex)[1]}`;
-                }
+                iconField.value = getIconUrl(searchField.value);
             }
 
             GM.setValue(titleField.value, JSON.stringify({
@@ -416,6 +414,17 @@ function main() {
             hideList.push({ bId: button.id, h: 'show' });
             GM.setValue('hideList', JSON.stringify(hideList));
         }
+    }
+
+    function getIconUrl(fromUrl) {
+        var regex = /(?:https?:\/\/)(w{0,3}\.?[\s\S]+?\.\w+)\//;
+        var result = '';
+
+        if (regex.test(fromUrl)) {
+            result = `https://www.google.com/s2/favicons?domain=${fromUrl.match(regex)[1]}`;
+        }
+
+        return result;
     }
 
     function toggleMsgBox(toggle, msg, showReload) {
