@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.051
+// @version     2.06
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
@@ -135,6 +135,16 @@ function main() {
     title = "Search Nyaa";
 
     var nyButton = creteButton(icon, searchUrl, title);
+
+
+    //KissAnime button
+    icon = 'https://www.google.com/s2/favicons?domain=kissanime.ru/';
+    searchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
+    title = "Search KissAnime";
+
+    var kaButton = creteButton(icon, searchUrl, title);
+
+
     header.addEventListener('mouseover', showEditButton);
     header.addEventListener('mouseout', hideEditButton);
 
@@ -181,7 +191,7 @@ function main() {
     function appendButtons(buttonsArray) {
         header.appendChild(document.createTextNode(" "));
 
-        const otherButtons = [ytButton, giButton, nyButton];
+        const otherButtons = [ytButton, giButton, nyButton, kaButton];
         const allButtons = buttonsArray.concat(otherButtons, customButtons, editButton);
 
         allButtons.forEach((b) => {
