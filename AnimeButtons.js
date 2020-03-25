@@ -79,7 +79,7 @@ function main() {
 
     function creteButton(icon, searchUrl, title) {
         var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }, { n: 'src', v: icon }]);
-        var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${getButtonId(title)}` },
+        var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${makeButtonId(title)}` },
         { n: 'href', v: searchUrl }, { n: 'target', v: "_blank" }, { n: 'title', v: title }]);
         button.appendChild(buttImg);
         return button;
@@ -249,7 +249,7 @@ function main() {
         });
     }
 
-    function getButtonId(buttonName) {
+    function makeButtonId(buttonName) {
         var result = 0;
         for (var i = 0; i < buttonName.length; i++) {
             result += buttonName.charCodeAt(i);
