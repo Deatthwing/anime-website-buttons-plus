@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.02
+// @version     2.05
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
@@ -79,7 +79,7 @@ function main() {
 
     function creteButton(icon, searchUrl, title) {
         var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }, { n: 'src', v: icon }]);
-        var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${buttonCounter++}` },
+        var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${getButtonId(title)}` },
         { n: 'href', v: searchUrl }, { n: 'target', v: "_blank" }, { n: 'title', v: title }]);
         button.appendChild(buttImg);
         return button;
@@ -193,13 +193,13 @@ function main() {
         getHideList();
         appendChildren(header, allButtons);
     }
-    
+
     function getHideList() {
         var promise = GM.getValue('hideList', '[]');
-        
+
         promise.then((v) => {
             var localVal = JSON.parse(v);
-            
+
             concatHideList(localVal);
             hideButtons();
             addButtonPopup();
@@ -247,6 +247,17 @@ function main() {
                 }
             }
         });
+    }
+
+    function getButtonId(buttonName) {
+        var result = 0;
+        for (var i = 0; i < buttonName.length; i++) {
+            result += buttonName.charCodeAt(i);
+        }
+
+        result *= buttonName.charCodeAt(0);
+
+        return result;
     }
 
 
@@ -322,7 +333,7 @@ function main() {
             sectionToHide = document.querySelector('.editSection');
             sectionToShow = document.querySelector('.addSection');
         }
-        
+
         sectionToHide.style.display = 'none';
         sectionToHide.style.height = '0%';
         sectionToHide.style.width = '0%';
@@ -413,7 +424,7 @@ function main() {
         }
         else {
             msgBox.style.opacity = '0';
-            setTimeout(() => {msgBox.style.bottom = '150%';}, 250);
+            setTimeout(() => { msgBox.style.bottom = '150%'; }, 250);
         }
     }
 
