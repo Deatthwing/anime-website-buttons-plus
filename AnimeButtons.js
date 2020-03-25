@@ -9,11 +9,11 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.102
-// @grant       GM.setValue
-// @grant       GM.getValue
-// @grant       GM.listValues
-// @grant       GM.deleteValue
+// @version     2.110
+// @grant       GM_setValue
+// @grant       GM_getValue
+// @grant       GM_listValues
+// @grant       GM_deleteValue
 // @namespace https://greasyfork.org/users/18375
 // ==/UserScript==
 
@@ -24,6 +24,13 @@ var host = document.location.host;
 var malHost = 'myanimelist.net';
 var apHost = 'www.anime-planet.com';
 var alHost = 'anilist.co';
+
+var hideList = [];
+
+var iconEyeGray = 'https://previews.dropbox.com/p/thumb/AAuWCCOL6JyGmMweL1F-_5DiAS2zJYRa5Lir0SbwC5DvS_0nQEwjuJvONWL8a5aBxxvBhMbmATHXk6HOq_p16qq_FCjHezpZK-WG59CrRBfTl2mY7-e1lE-Ce2r1JEgpQFmo0LllAXnpcbeH7-68AxkfuMN4g6ChfpHCoaX7r9YH8MCQVu01ect1cCdqHDYlJBqgRWUrbTjwrlIlV9Y545Eldz5Xp948EIoHnNVeov_ybS2u-oGDZWwFtN5FLGCtJTyXK2sLylpQ8cvH7DVl0DAVcGO0YF6_RqIwbCpt-yCS58gfClH3lTEmPKunqrBwfNQe0SxXvyXTr-1GbCDiP_Lq/p.png?size=2048x1536&size_mode=3';
+
+var iconEye = 'https://previews.dropbox.com/p/thumb/AAvAf0hVyAwc9SRprGbA731CezYJ5amifW_2ApUxlRa0i98WlQoS13M3EQNGLv9kNTHsle6RsiUTlNZPtimWZM1ccs4i0orerrn0SwuPcsaGnU0cKho2IWWE-mEAhhoh779w04r8yWqJrAZZcYiy1mLZINV6SKIRq797-RW0gsZXZ8tgvcWa_nIAF2cpttnklJ93I0h2FFtmlrdX7WCzUBo2eML71mGMfRebI4b9wYnfFNT_77xWPeA1RoOaFLkYBKWF3wIsfnSCVGjodq_yHC6xjJJ2mwSbiRxuTO0glpiiT0AGN3hUTD0th5IbY5EPF-R4H1zPJMnPScAKax9RlrW5/p.png?fv_content=true&size_mode=5';
+
 
 if (host === apHost) {
     header = getHeader("#siteContainer h1");
@@ -53,8 +60,6 @@ function getHeader(atr) {
     return document.querySelector(atr);
 }
 
-
-var hideList = [];
 
 function main() {
 
@@ -102,7 +107,7 @@ function main() {
     var buttonCounter = 0;
 
     //MAL Button
-    var icon = ''; 
+    var icon = '';
     var searchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
     var title = "Search MyAnimeList";
 
@@ -168,30 +173,24 @@ function main() {
 
 
     const customButtons = [];
-    const customButtonsObj = [];
 
-    var valuesListPromise = GM.listValues();
-    valuesListPromise.then(getCustomButtons);
+    var customButtonsObj = getCustomButtons(GM_listValues());
 
-    function appendCustomButtons(customButtonsObj) {
-        customButtonsObj.forEach((b) => {
-            customButtons.push(creteButton(b.icon, b.url.replace('ANIMENAME', animeName), b.title));
-        })
-        startAppending();
-    }
+    customButtonsObj.forEach((b) => {
+        customButtons.push(creteButton(b.icon, b.url.replace('ANIMENAME', animeName), b.title));
+    });
+
 
 
     //Add Website Buttons
-    function startAppending() {
-        if (host === apHost) {
-            appendButtons([malButton, alButton]);
-        }
-        else if (host === alHost) {
-            appendButtons([malButton, apButton]);
-        }
-        else if (host === malHost) {
-            appendButtons([apButton, alButton]);
-        }
+    if (host === apHost) {
+        appendButtons([malButton, alButton]);
+    }
+    else if (host === alHost) {
+        appendButtons([malButton, apButton]);
+    }
+    else if (host === malHost) {
+        appendButtons([apButton, alButton]);
     }
 
     function appendButtons(buttonsArray) {
@@ -200,26 +199,26 @@ function main() {
         const otherButtons = [ytButton, giButton, nyButton, kaButton];
         const allButtons = buttonsArray.concat(otherButtons, customButtons, editButton);
 
+        // hideList = [];
+
         allButtons.forEach((b) => {
             if (b.id !== '') {
                 hideList.push({ bId: b.id, h: 'show' })
             }
         });
 
-        getHideList();
         appendChildren(header, allButtons);
+        getHideList();
+        hideButtons();
+        addButtonPopup();
     }
 
+
+
+
     function getHideList() {
-        var promise = GM.getValue('hideList', '[]');
-
-        promise.then((v) => {
-            var localVal = JSON.parse(v);
-
-            concatHideList(localVal);
-            hideButtons();
-            addButtonPopup();
-        });
+        var hideListNew = GM_getValue('hideList', '[]');
+        concatHideList(JSON.parse(hideListNew));
     }
 
     function concatHideList(v) {
@@ -232,23 +231,17 @@ function main() {
 
 
     function getCustomButtons(values) {
-        values.forEach(async (n) => {
+        var customBtnsObj = [];
+
+        values.forEach((n) => {
             if (n !== 'hideList') {
-                customButtonsObj.push(JSON.parse(await GM.getValue(n)));
+                customBtnsObj.push(JSON.parse(GM_getValue(n)));
             }
         });
 
-        checkIfDataReady();
+        return customBtnsObj;
     }
 
-    function checkIfDataReady() {
-        if (customButtonsObj.length > 0) {
-            appendCustomButtons(customButtonsObj);
-        }
-        else {
-            setTimeout(checkIfDataReady, 300);
-        }
-    }
 
     function hideButtons() {
         hideList.forEach((o) => {
@@ -301,14 +294,13 @@ function main() {
         var targetEl = e.target;
 
         if (targetEl.className === 'addButton') {
-            var valuesListPromise = GM.listValues();
-            valuesListPromise.then(addButtonLogic);
+            addButtonLogic(GM_listValues());
         }
         else if (targetEl.className === 'cancelButton') {
             togglePopup(false);
         }
         else if (targetEl.className === 'deleteButton') {
-            GM.deleteValue(document.querySelector('.titleInput').value)
+            GM_deleteValue(document.querySelector('.titleInput').value)
             togglePopup(false);
         }
 
@@ -390,29 +382,21 @@ function main() {
                 iconField.value = getIconUrl(searchField.value);
             }
 
-            GM.setValue(titleField.value, JSON.stringify({
+            GM_setValue(titleField.value, JSON.stringify({
                 title: titleField.value,
                 url: searchField.value,
                 icon: iconField.value
             }));
 
+            toggleMsgBox(true, `Button ${titleField.value} added succsessfully! Reload to see it!`, true);
+
+            // var button = creteButton(iconField.value, searchField.value, titleField.value);
+            hideList.push({ bId: `animeButton${makeButtonId(titleField.value)}`, h: 'show' });
+            GM_setValue('hideList', JSON.stringify(hideList));
+
             titleField.value = '';
             searchField.value = '';
             iconField.value = '';
-
-            /*
-            var animeButtonsList = document.querySelector('.buttonsList');
-            
-            createAndAppendEditListEntry(animeButtonsList, [button], 6);
-            
-            header.insertBefore(button, editButton);
-            */
-
-            toggleMsgBox(true, `Button ${titleField.value} added succsessfully! Reload to see it!`, true);
-
-            var button = creteButton(iconField.value, searchField.value, titleField.value);
-            hideList.push({ bId: button.id, h: 'show' });
-            GM.setValue('hideList', JSON.stringify(hideList));
         }
     }
 
@@ -453,16 +437,16 @@ function main() {
 
     function hideAndDeleteHandler(e) {
         var target = e.target;
-        var buttPrent = target.parentElement;
-        var button = document.querySelector(`#${buttPrent.className}`);
+        var buttParent = target.parentElement;
+        var button = document.querySelector(`#${buttParent.className}`);
 
         if (target.className === "removeButton") {
             button.remove();
             target.parentElement.remove();
-            GM.deleteValue(buttPrent.textContent);
+            GM_deleteValue(buttParent.textContent);
             hideList = hideList.filter(obj => obj.bId !== button.id);
 
-            GM.setValue('hideList', JSON.stringify(hideList));
+            GM_setValue('hideList', JSON.stringify(hideList));
         }
         else if (target.className === 'hideButton') {
             if (button.style.display === 'none') {
@@ -476,7 +460,7 @@ function main() {
                 target.setAttribute('src', iconEyeGray);
             }
 
-            GM.setValue('hideList', JSON.stringify(hideList));
+            GM_setValue('hideList', JSON.stringify(hideList));
 
             hideButtons();
         }
@@ -492,11 +476,6 @@ function main() {
             toggleMsgBox(false);
         }
     }
-
-    var iconEyeGray = 'https://previews.dropbox.com/p/thumb/AAuWCCOL6JyGmMweL1F-_5DiAS2zJYRa5Lir0SbwC5DvS_0nQEwjuJvONWL8a5aBxxvBhMbmATHXk6HOq_p16qq_FCjHezpZK-WG59CrRBfTl2mY7-e1lE-Ce2r1JEgpQFmo0LllAXnpcbeH7-68AxkfuMN4g6ChfpHCoaX7r9YH8MCQVu01ect1cCdqHDYlJBqgRWUrbTjwrlIlV9Y545Eldz5Xp948EIoHnNVeov_ybS2u-oGDZWwFtN5FLGCtJTyXK2sLylpQ8cvH7DVl0DAVcGO0YF6_RqIwbCpt-yCS58gfClH3lTEmPKunqrBwfNQe0SxXvyXTr-1GbCDiP_Lq/p.png?size=2048x1536&size_mode=3';
-
-    var iconEye = 'https://previews.dropbox.com/p/thumb/AAvAf0hVyAwc9SRprGbA731CezYJ5amifW_2ApUxlRa0i98WlQoS13M3EQNGLv9kNTHsle6RsiUTlNZPtimWZM1ccs4i0orerrn0SwuPcsaGnU0cKho2IWWE-mEAhhoh779w04r8yWqJrAZZcYiy1mLZINV6SKIRq797-RW0gsZXZ8tgvcWa_nIAF2cpttnklJ93I0h2FFtmlrdX7WCzUBo2eML71mGMfRebI4b9wYnfFNT_77xWPeA1RoOaFLkYBKWF3wIsfnSCVGjodq_yHC6xjJJ2mwSbiRxuTO0glpiiT0AGN3hUTD0th5IbY5EPF-R4H1zPJMnPScAKax9RlrW5/p.png?fv_content=true&size_mode=5';
-
 
     function addButtonPopup() {
         var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
@@ -544,7 +523,7 @@ function main() {
         var cancelButtonEdit = createHTMLElement('button', 'CLOSE', 'cancelButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
         editButtonsDiv.appendChild(cancelButtonEdit);
 
-        createAndAppendEditListEntry(animeButtonsList, animeButtons, 1);
+        createAndAppendEditListEntry(animeButtonsList, animeButtons);
 
         popUp.appendChild(tabs);
         appendChildren(buttonsDiv, [addButton, cancelButton]);
@@ -563,9 +542,7 @@ function main() {
         msgBoxDiv.addEventListener('click', msgButtonsHandler);
     }
 
-    function createAndAppendEditListEntry(animeButtonsList, animeButtons, counterStartVal) {
-        var counter = counterStartVal;
-
+    function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
         animeButtons.forEach((b) => {
             var listEl = createHTMLElement('li', null, b.id, [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
             var imgUrl = b.firstElementChild.getAttribute('src');
