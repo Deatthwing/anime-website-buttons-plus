@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.06
+// @version     2.1
 // @grant       GM.setValue
 // @grant       GM.getValue
 // @grant       GM.listValues
@@ -77,10 +77,14 @@ function main() {
     }
 
 
-    function creteButton(icon, searchUrl, title) {
+    function creteButton(icon, searchUrl, title, isStock) {
         var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }, { n: 'src', v: icon }]);
         var button = createHTMLElement("a", null, 'animeButton', [{ n: 'id', v: `animeButton${makeButtonId(title)}` },
         { n: 'href', v: searchUrl }, { n: 'target', v: "_blank" }, { n: 'title', v: title }]);
+
+        if (isStock) {
+            button.className += ' stockButton';
+        }
         button.appendChild(buttImg);
         return button;
     }
@@ -94,7 +98,7 @@ function main() {
     var searchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
     var title = "Search MyAnimeList";
 
-    var malButton = creteButton(icon, searchUrl, title);
+    var malButton = creteButton(icon, searchUrl, title, true);
 
 
     //Anilist Button
@@ -102,7 +106,7 @@ function main() {
     searchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
     title = "Search Anilist";
 
-    var alButton = creteButton(icon, searchUrl, title);
+    var alButton = creteButton(icon, searchUrl, title, true);
 
 
     //Anime-Planet Button
@@ -110,7 +114,7 @@ function main() {
     searchUrl = 'https://www.anime-planet.com/anime/all?name=' + animeName;
     title = "Search Anime-Planet";
 
-    var apButton = creteButton(icon, searchUrl, title);
+    var apButton = creteButton(icon, searchUrl, title, true);
 
 
     //YouTube Button
@@ -118,7 +122,7 @@ function main() {
     searchUrl = 'https://www.youtube.com/results?search_query=' + animeName + " trailer";
     title = 'YouTube Trailer';
 
-    var ytButton = creteButton(icon, searchUrl, title);
+    var ytButton = creteButton(icon, searchUrl, title, true);
 
 
     //Google Images button
@@ -126,7 +130,7 @@ function main() {
     searchUrl = 'https://www.google.bg/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
     title = "Search with Google Images";
 
-    var giButton = creteButton(icon, searchUrl, title);
+    var giButton = creteButton(icon, searchUrl, title, true);
 
 
     //Nyaa button
@@ -134,7 +138,7 @@ function main() {
     searchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
     title = "Search Nyaa";
 
-    var nyButton = creteButton(icon, searchUrl, title);
+    var nyButton = creteButton(icon, searchUrl, title, true);
 
 
     //KissAnime button
@@ -142,7 +146,7 @@ function main() {
     searchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
     title = "Search KissAnime";
 
-    var kaButton = creteButton(icon, searchUrl, title);
+    var kaButton = creteButton(icon, searchUrl, title, true);
 
 
     header.addEventListener('mouseover', showEditButton);
@@ -567,7 +571,7 @@ function main() {
 
             appendChildren(listEl, [img, span, hideIcon]);
 
-            if (counter++ > 5) {
+            if (!b.className.includes('stockButton')) {
                 listEl.appendChild(removeIcon);
             }
             animeButtonsList.appendChild(listEl);
