@@ -9,7 +9,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.500
+// @version     2.501
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -312,7 +312,7 @@ function main() {
 
         if (autoHide) {
             var arrowButton = document.querySelector('.arrowButton');
-            var buttonsDiv = header.firstElementChild.firstElementChild;
+            var buttonsDiv = document.querySelector('.animeButtons');
             buttonsDiv.style.left = '0%';
             arrowButton.style.opacity = '0';
         }
@@ -324,7 +324,7 @@ function main() {
         var editButton = document.querySelector('.editButton');
 
         if (autoHide) {
-            var buttonsDiv = header.firstElementChild.firstElementChild;
+            var buttonsDiv = document.querySelector('.animeButtons');
             var arrowButton = document.querySelector('.arrowButton');
             buttonsDiv.style.left = `-${buttDivLeft * 18}px`;
             arrowButton.style.opacity = '1';
