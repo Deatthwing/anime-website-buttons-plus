@@ -10,7 +10,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.560
+// @version     2.561
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -242,12 +242,15 @@ function main() {
     //Add Website Buttons
     if (host === apHost) {
         appendButtons([malButton, alButton]);
+        getElement('animeButtons').style.top = '6px';
     }
     else if (host === alHost) {
         appendButtons([malButton, apButton]);
+        getElement('animeButtons').style.top = '8px';
     }
     else if (host === malHost) {
         appendButtons([apButton, alButton]);
+        getElement('animeButtons').style.top = '2px';
     }
 
 
