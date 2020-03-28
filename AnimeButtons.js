@@ -5,11 +5,12 @@
 // @include     http://myanimelist.net/anime/*
 // @include     https://myanimelist.net/anime/*
 // @include     https://anilist.co/anime/*
+// @include     https://anilist.co/search/*
 // @exclude     https://www.anime-planet.com/anime/
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.550
+// @version     2.560
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -37,11 +38,11 @@ var editIcon = 'https://previews.dropbox.com/p/thumb/AAs_uEIlA0XGqQKA3-9SaVvSNTE
 
 
 if (host === apHost) {
-    header = getHeader("#siteContainer h1");
+    header = getElement("#siteContainer h1");
     main();
 }
 else if (host === malHost) {
-    header = getHeader('#contentWrapper span span');
+    header = getElement('#contentWrapper span span');
     main();
 }
 else if (host === alHost) {
@@ -49,20 +50,19 @@ else if (host === alHost) {
 }
 
 function getAlHeader() {
-    header = getHeader('div.content h1');
+    header = getElement('div.content h1');
 
     if (header) {
         main();
     }
     else {
-        setTimeout(getAlHeader, 500);
+        setTimeout(getAlHeader, 300);
     }
 }
 
-function getHeader(atr) {
+function getElement(atr) {
     return document.querySelector(atr);
 }
-
 
 
 
@@ -90,7 +90,7 @@ function main() {
                     if (b.className.includes('stockButton')) {
                         b.href = urlsObjs.find(o => `animeButton${makeButtonId(o.n)}` === b.id).u;
                     }
-                    else{
+                    else {
                         b.href = customButtonsObjs.find(o => `animeButton${makeButtonId(o.title)}` === b.id).url.replace('ANIMENAME', animeName);
                     }
                 });
@@ -126,7 +126,7 @@ function main() {
 
     //Set buttons with information
     var malSearchUrl;
-    var searchUrl;
+    var alSearchUrl;
     var apSearchUrl;
     var ytSearchUrl;
     var gSearchUrl;
@@ -135,9 +135,9 @@ function main() {
 
     function setSearchURLs() {
         malSearchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
-        searchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
+        alSearchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
         apSearchUrl = 'https://www.anime-planet.com/anime/all?name=' + animeName;
-        ytSearchUrl = 'https://www.youtube.com/results?search_query=' + animeName + " trailer";
+        ytSearchUrl = 'https://www.youtube.com/results?search_query=' + animeName + ' trailer';
         gSearchUrl = 'https://www.google.com/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
         nySearchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
         kaSearchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
@@ -149,16 +149,16 @@ function main() {
     setSearchURLs();
 
     //MAL Button
-    var icon = '';
+    var icon = null;
     var malTitle = "Search MyAnimeList";
 
     var malButton = creteButton(icon, malSearchUrl, malTitle, true);
 
 
     //Anilist Button
-    var title = "Search Anilist";
+    var alTitle = "Search Anilist";
 
-    var alButton = creteButton(icon, searchUrl, title, true);
+    var alButton = creteButton(icon, alSearchUrl, alTitle, true);
 
 
     //Anime-Planet Button
@@ -192,12 +192,14 @@ function main() {
 
 
     //Edit button
-    title = "Edit Custom Buttons";
+    alTitle = "Edit Custom Buttons";
 
-    var arrowButtonImg = createHTMLElement('img', null, 'arrowButton', [{ n: 'src', v: arrowIcon }, { n: 'title', v: title },
+    var arrowButtonImg = createHTMLElement('img', null, 'arrowButton', [{ n: 'src', v: arrowIcon }, { n: 'title', v: alTitle },
     { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
-    var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: title },
+
+    var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: alTitle },
     { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;opacity:0;' }]);
+
     var editButton = createHTMLElement('div', null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
 
     if (!autoHide) {
@@ -210,7 +212,7 @@ function main() {
 
     appendChildren(editButton, [editButtonImg, arrowButtonImg]);
 
-    editButton.addEventListener('click', editButtonHandler);
+    editButton.addEventListener('click', () => { togglePopup(true); });
 
 
     var customButtons = [];
@@ -249,20 +251,22 @@ function main() {
     }
 
 
-    function appendButtons(buttonsArray) {
+    function appendButtons(mainButtonsArray) {
         header.appendChild(document.createTextNode(" "));
 
-        var otherButtons = [ytButton, giButton, nyButton, kaButton];
-        var allButtons = buttonsArray.concat(otherButtons, customButtons, editButton);
+        var allButtons = mainButtonsArray.concat([ytButton, giButton, nyButton, kaButton], customButtons, editButton);
         var buttonsDiv = createHTMLElement('div', null, 'animeButtons', [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
         var outerButtonsDiv = createHTMLElement('div', null, null, [{ n: 'style', v: 'display:inline-block;position:relative;overflow:hidden;' }]);
 
-        outerButtonsDiv.appendChild(buttonsDiv);
         appendChildren(buttonsDiv, allButtons);
+        outerButtonsDiv.appendChild(buttonsDiv);
 
         allButtons.forEach((b) => {
             if (b.id !== '') {
-                hideList.push({ bId: b.id, h: 'show' });
+                hideList.push({
+                    bId: b.id,
+                    h: 'show'
+                });
             }
         });
 
@@ -290,13 +294,16 @@ function main() {
         if (!hideListNew || hideListNew === undefined || hideListNew === 'undefined') {
             hideListNew = '[]';
         }
+
         concatHideList(JSON.parse(hideListNew));
     }
 
     function concatHideList(v) {
         v.forEach(b => {
             var item = hideList.find(n => n.bId === b.bId);
-            if (item) { return Object.assign(item, b); }
+            if (item) {
+                return Object.assign(item, b);
+            }
             hideList.push(b);
         });
     }
@@ -305,7 +312,7 @@ function main() {
         buttDivLeft = 0;
 
         hideList.forEach((o) => {
-            var button = document.querySelector(`#${o.bId}`);
+            var button = getElement(`#${o.bId}`);
 
             if (button) {
                 if (o.h === 'show') {
@@ -325,26 +332,20 @@ function main() {
             result += buttonName.charCodeAt(i);
         }
 
-        result *= buttonName.charCodeAt(buttonName.length - 1);
-
-        return result;
+        return result * buttonName.charCodeAt(buttonName.length - 1);
     }
 
-
-    function editButtonHandler(e) {
-        togglePopup(true);
-    }
 
     function getPopup() {
-        return document.querySelector('.buttonPopup');
+        return getElement('.buttonPopup');
     }
 
     function showEditButton() {
-        var editButton = document.querySelector('.editButton');
+        var editButton = getElement('.editButton');
 
         if (autoHide) {
-            var arrowButton = document.querySelector('.arrowButton');
-            var buttonsDiv = document.querySelector('.animeButtons');
+            var arrowButton = getElement('.arrowButton');
+            var buttonsDiv = getElement('.animeButtons');
             buttonsDiv.style.left = '0%';
             arrowButton.style.opacity = '0';
         }
@@ -353,11 +354,11 @@ function main() {
     }
 
     function hideEditButton() {
-        var editButton = document.querySelector('.editButton');
+        var editButton = getElement('.editButton');
 
         if (autoHide) {
-            var buttonsDiv = document.querySelector('.animeButtons');
-            var arrowButton = document.querySelector('.arrowButton');
+            var buttonsDiv = getElement('.animeButtons');
+            var arrowButton = getElement('.arrowButton');
             buttonsDiv.style.left = `-${buttDivLeft * 18}px`;
             arrowButton.style.opacity = '1';
         }
@@ -375,7 +376,7 @@ function main() {
             togglePopup(false);
         }
         else if (targetEl.className === 'deleteButton') {
-            GM_deleteValue(document.querySelector('.titleInput').value);
+            GM_deleteValue(getElement('.titleInput').value);
             togglePopup(false);
         }
     }
@@ -407,30 +408,27 @@ function main() {
         var sectionToShow;
 
         if (toHide.className === 'addTab') {
-            sectionToHide = document.querySelector('.addSection');
-            sectionToShow = document.querySelector('.editSection');
+            sectionToHide = getElement('.addSection');
+            sectionToShow = getElement('.editSection');
         }
         else {
-            sectionToHide = document.querySelector('.editSection');
-            sectionToShow = document.querySelector('.addSection');
+            sectionToHide = getElement('.editSection');
+            sectionToShow = getElement('.addSection');
         }
 
         sectionToHide.style.opacity = '0';
 
         setTimeout(() => {
             sectionToHide.style.display = 'none';
-        }, 200);
-
-        setTimeout(() => {
             sectionToShow.style.display = 'block';
             setTimeout(() => sectionToShow.style.opacity = '1', 50);
         }, 200);
     }
 
-    function togglePopup(v) {
+    function togglePopup(show) {
         var popUp = getPopup();
 
-        if (v) {
+        if (show) {
             header.removeEventListener('mouseout', hideEditButton);
             popUp.style.opacity = '1';
             popUp.style.top = '50%';
@@ -451,21 +449,21 @@ function main() {
         GM_setValue('setting:buttonsNames', JSON.stringify(buttonsNames));
     }
 
-    function addButtonLogic(valuesList) {
-        var titleField = document.querySelector('.titleInput');
-        var searchField = document.querySelector('.URLInput');
-        var iconField = document.querySelector('.iconInput');
+    function addButtonLogic() {
+        var titleField = getElement('.titleInput');
+        var searchField = getElement('.URLInput');
+        var iconField = getElement('.iconInput');
 
         var buttonsNames = getAnimeButtonsFromStorage();
 
         if (titleField.value === '') {
-            toggleMsgBox(true, 'Title cannot be empty!', false);
+            toggleMsgBox(true, 'Title cannot be empty!');
         }
         else if (searchField.value === '') {
-            toggleMsgBox(true, 'Search URL cannot be empty!', false);
+            toggleMsgBox(true, 'Search URL cannot be empty!');
         }
         else if (buttonsNames.find((o) => o.title === titleField.value)) {
-            toggleMsgBox(true, 'Button with the same name already exists!', false);
+            toggleMsgBox(true, 'Button with the same name already exists!');
         }
         else {
             if (iconField.value === '') {
@@ -505,7 +503,7 @@ function main() {
     }
 
     function toggleMsgBox(toggle, msg, showReload) {
-        var msgBox = document.querySelector('.addMsgBox');
+        var msgBox = getElement('.addMsgBox');
 
         if (msg) {
             msgBox.firstElementChild.textContent = msg;
@@ -531,7 +529,7 @@ function main() {
     function hideAndDeleteHandler(e) {
         var target = e.target;
         var buttParent = target.parentElement;
-        var button = document.querySelector(`#${buttParent.className}`);
+        var button = getElement(`#${buttParent.className}`);
 
         if (target.className === "removeButton") {
             button.remove();
@@ -594,13 +592,13 @@ function main() {
 
     function URLQuestionmarkHandler(e) {
         showInfoBox(e.target.parentElement.lastElementChild);
-        var iconInfoBox = document.querySelector('.iconInfoBox');
+        var iconInfoBox = getElement('.iconInfoBox');
         hideInfoBox(iconInfoBox);
     }
 
     function iconQuestionmarkHandler(e) {
         showInfoBox(e.target.parentElement.lastElementChild);
-        var URLInfoBox = document.querySelector('.URLInfoBox');
+        var URLInfoBox = getElement('.URLInfoBox');
         hideInfoBox(URLInfoBox);
     }
 
@@ -686,7 +684,7 @@ function main() {
         appendChildren(editSection, [editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv]);
 
         appendChildren(popUp, [addSection, editSection]);
-        var html = document.querySelector('html');
+        var html = getElement('html');
         html.appendChild(popUp);
 
         buttonsDiv.addEventListener('click', addAndCancelButtonsHandler);
