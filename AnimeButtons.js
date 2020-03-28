@@ -242,15 +242,15 @@ function main() {
     //Add Website Buttons
     if (host === apHost) {
         appendButtons([malButton, alButton]);
-        getElement('animeButtons').style.top = '6px';
+        getElement('.animeButtons').parentElement.style.top = '6px';
     }
     else if (host === alHost) {
         appendButtons([malButton, apButton]);
-        getElement('animeButtons').style.top = '8px';
+        getElement('.animeButtons').parentElement.style.top = '8px';
     }
     else if (host === malHost) {
         appendButtons([apButton, alButton]);
-        getElement('animeButtons').style.top = '2px';
+        getElement('.animeButtons').parentElement.style.top = '2px';
     }
 
 
