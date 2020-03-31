@@ -10,7 +10,7 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.561
+// @version     2.5.7
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -138,7 +138,7 @@ function main() {
         alSearchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
         apSearchUrl = 'https://www.anime-planet.com/anime/all?name=' + animeName;
         ytSearchUrl = 'https://www.youtube.com/results?search_query=' + animeName + ' trailer';
-        gSearchUrl = 'https://www.google.com/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
+        gSearchUrl = 'https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
         nySearchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
         kaSearchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
 
