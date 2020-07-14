@@ -11,8 +11,8 @@
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
-// @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.600
+// @description A script that adds buttons on Anime Planet, MAL, Kitsu and Anilist for searching various sites.
+// @version     2.601
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -644,7 +644,7 @@ function main() {
     }
 
     function addButtonPopup() {
-        var questionmarkIcon = 'https://previews.dropbox.com/p/thumb/AAs9PpoNBbIv4yP0RKqnNKTZEYjDtwtWT-24ZkhGOTR9w-CeCdnwqQFvjYSk4YJM8SPo7Pi85ndYpE5ZsJ85Zysho9UfAcqaVYATZ_2UW-y7JtKdKiu1Y7jmPVb9Gv5fRLw20phAXqhEx7EbC6JsRkBvZ6aujPDiiEg8-X0F41jb-wFJ-DW9vrSMOVGyM4dHIxaQNcuCcESUAc6sCfD9Y7iKR3SVd7tWfcAp9SquCdf6aFTIOVXNASu_jFM35cRNpPOQ-i3kO32mPLs98SGDNjszVPGsCBeUKQE6BKnKMb_PVT7l-rx6C1QY6W_VejIUHOtt7_ID4xuFjgLqGSNRpfC6/p.png?size=2048x1536&size_mode=3';
+        var questionmarkIcon = 'https://previews.dropbox.com/p/thumb/AA3pWSY__qYLK52QXj1y6ciDLqfQZhwmchbpXZ8LZuw7WES_RxubF0RqFGDd7PTZ5MF4S5lmo2FoqT1Uc-94jOTVWJcv2IB4O3NMpqeM9ZGOk1I7d2kR9LhlrxA797nOmPKtK0GZO3axIbEP8udQJ9nbTDJAhrBx6uvQWPF9AYFJmA-3NL0UsztdTlyyVGGOvz4rXAyKBFwRAxUTiSZnEfMVQhoX-2o23zR8NQHBVqF5v3n-VZ79WMJul9jgdTG-41-aFeScr4iyHmI417_MlqMKkklZBKJ7fOlEuVhpDKKyNNwEcM9r_TMkFIcDM59FbGgXRQtBzIXKSszPXdZoFiHM_sPEeZl8zduQRMLcAc7wig/p.png?size=2048x1536&size_mode=3';
 
         var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
         var popUp = createHTMLElement('div', null, 'buttonPopup', [{ n: 'style', v: 'position:absolute;top:-100%;left:50%;margin-top:-280px;margin-left:-200px;background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
