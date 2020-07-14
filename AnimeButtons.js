@@ -1,6 +1,6 @@
 // ==UserScript==
 // @author      Deathwing
-// @name        Anime Website Buttons Plus
+// @name        Anime Website (Custom) Buttons Plus
 // @include     https://www.anime-planet.com/anime/*
 // @include     http://myanimelist.net/anime/*
 // @include     https://myanimelist.net/anime/*
@@ -161,7 +161,8 @@ function main() {
         nySearchUrl = `https://nyaa.si/?f=0&c=0_0&q=${animeName}`;
         kaSearchUrl = `https://kissanime.ru/Search/Anime?keyword=${animeName}`;
 
-        return [{ n: malTitle, u: malSearchUrl }, { n: alTitle, u: alSearchUrl }, { n: apTitle, u: apSearchUrl }, { n: kTitle, u: kSearchUrl }, { n: ytTitle, u: ytSearchUrl },
+        return [{ n: malTitle, u: malSearchUrl }, { n: alTitle, u: alSearchUrl },
+        { n: apTitle, u: apSearchUrl }, { n: kTitle, u: kSearchUrl }, { n: ytTitle, u: ytSearchUrl },
         { n: gTitle, u: gSearchUrl }, { n: nyTitle, u: nySearchUrl }, { n: kaTitle, u: kaSearchUrl }];
     }
 
