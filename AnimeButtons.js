@@ -6,11 +6,13 @@
 // @include     https://myanimelist.net/anime/*
 // @include     https://anilist.co/anime/*
 // @include     https://anilist.co/search/*
+// @include     https://kitsu.io/anime*
 // @exclude     https://www.anime-planet.com/anime/
 // @exclude     https://www.anime-planet.com/anime/all?name=*
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
+// @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL and Anilist for searching various sites.
-// @version     2.562
+// @version     2.600
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -25,16 +27,17 @@ var host = document.location.host;
 var malHost = 'myanimelist.net';
 var apHost = 'www.anime-planet.com';
 var alHost = 'anilist.co';
+var kHost = 'kitsu.io';
 
 var hideList = [];
 
 var buttDivLeft = 0;
 var autoHide = GM_getValue('setting:autoHide', false);
 
-var iconEyeGray = 'https://previews.dropbox.com/p/thumb/AAuWCCOL6JyGmMweL1F-_5DiAS2zJYRa5Lir0SbwC5DvS_0nQEwjuJvONWL8a5aBxxvBhMbmATHXk6HOq_p16qq_FCjHezpZK-WG59CrRBfTl2mY7-e1lE-Ce2r1JEgpQFmo0LllAXnpcbeH7-68AxkfuMN4g6ChfpHCoaX7r9YH8MCQVu01ect1cCdqHDYlJBqgRWUrbTjwrlIlV9Y545Eldz5Xp948EIoHnNVeov_ybS2u-oGDZWwFtN5FLGCtJTyXK2sLylpQ8cvH7DVl0DAVcGO0YF6_RqIwbCpt-yCS58gfClH3lTEmPKunqrBwfNQe0SxXvyXTr-1GbCDiP_Lq/p.png?size=2048x1536&size_mode=3';
-var iconEye = 'https://previews.dropbox.com/p/thumb/AAvAf0hVyAwc9SRprGbA731CezYJ5amifW_2ApUxlRa0i98WlQoS13M3EQNGLv9kNTHsle6RsiUTlNZPtimWZM1ccs4i0orerrn0SwuPcsaGnU0cKho2IWWE-mEAhhoh779w04r8yWqJrAZZcYiy1mLZINV6SKIRq797-RW0gsZXZ8tgvcWa_nIAF2cpttnklJ93I0h2FFtmlrdX7WCzUBo2eML71mGMfRebI4b9wYnfFNT_77xWPeA1RoOaFLkYBKWF3wIsfnSCVGjodq_yHC6xjJJ2mwSbiRxuTO0glpiiT0AGN3hUTD0th5IbY5EPF-R4H1zPJMnPScAKax9RlrW5/p.png?fv_content=true&size_mode=5';
-var arrowIcon = 'https://previews.dropbox.com/p/thumb/AAu9RWVjB27yYf1IBTB2kIUi34QfZswYDWKQ4e5_vutzZSLP6q0ju6FtFEo6uqIoRbIy3yS2DxS6iiKhJP7rwtbbaWmNqdFBA1gmw4Xk7wAU3stUxDgxTXfGPW5lAI6af3ndevX2PRm4aqPcE_jcvWtP6CdKGOCW08b1ej4dxF6i62M97T96fered6dQYu7xw8HtuXsuHG1wndmjr71iwgGYOa40ucoHunZ-SkPiUqy6PQkG3frzFn8fTvaee1gR_8Jx5Be_lwh3A9so8ZvCaODcjuJYL54OzfUm9o19jKbpWVEnDQuwMIACydwIbxmRxy8IOtPzVm303mOT8Y1rONnT/p.png?size=2048x1536&size_mode=3';
-var editIcon = 'https://previews.dropbox.com/p/thumb/AAs_uEIlA0XGqQKA3-9SaVvSNTEfLD9T59ZRlYGPzHmrabhLYbrFL_7v07jrFvFwmHhfCyYTmwFjeC-00XVF7LE4zkSnA7q1f_dvUrhH-M9rDEL7ZaqzQLC_2lO3oxevjm235o8NS3R3-fBVijSrtHcdKgG_0B3FnCEYM5LHkvZO6P0HbrQQ2gmwo4m4JE4EbD44oSCMXcGqy0kU5kzBtKFgbP57Cv-k9HHw3SnNNsFiPC9HGRIiYA9PhCAjxFzy8gRFJlWwR5V7iIJJq9-ImQ_FLxlX_bn27k7IexLJvWHaf4UmK3nifCisIb0oMVUeyBfBhXd04kIVfmwFnwXgjnud/p.png?size=2048x1536&size_mode=3';
+var iconEyeGray = 'https://previews.dropbox.com/p/thumb/AA2t3aKCs5ewg_5COcV7iXulMcNMAGsoQasJtushSpwGeU308fSykHxETdtl6aHwdXt8tdM5EwTK6pad4TUTpB30ZbBJwyvN_vmEa6HnbriUmXBoaQcVGCEUcWKiSak-vBspfLHKXs-bkACHP83VSmuvGwJNvQlc10_UsH-LMIph7YwoawujdVHhTUE5LQ0MJVaxBAa-u-J4pS3vVJOPp55rk-bs1SXmnANg3rswMyPCIFK8l0ZZ01xIRPDf9EU6tOuSomxEHkFNimmHgpbEm9YZBxc8JpQa8H90q65NfTcybtyQIRW7S2MsH-VINlKq5ihWhD7T5DsmchwlFrk1eB_JeAgYri9W5g1AocLovjopMg/p.png?fv_content=true&size_mode=5';
+var iconEye = 'https://previews.dropbox.com/p/thumb/AA1V6BjYFH9uWwomKZZdnUpLeQuuzBeUmJoYnrmqx99kMZYnMJrN_sr471fAHaPDgLgScKNFcQxQqLPiqcNYxFItW1-qtxv48Sf-OJe1-EzB-6mm9Qljlcehww5HFzO6nlcxHcrSRJ8ExaL3pjCM4wm5YsLqXENnUPOI-VNHMpFSdJQGDxw884z30XuC4xQ6d6Z4aUWGZgMnrVSQXNlQPsyVew1LDTLxDHgjjUsyhuJPbhuUvZTMaEJdEvEA1ionmb6eP7Cmgca6AiE7at_RNS0oypjDd3xKErEzyWJIdKLZFJBBanLOf29O15NdiMsxH3ubdDaDod-ZTMXCFHo4FJC7s4YJN9XENsS-fHFsFVaLWA/p.png?fv_content=true&size_mode=5';
+var arrowIcon = 'https://previews.dropbox.com/p/thumb/AA2xGn4gG5_oG0dBkwKiUUKPgC354gM0-cGU_hxtn3B7h33pTeB7aLXHsv01myLzDePpeEqU-Z4yybgEh8MZOL9Ssb0odTf2sGbuebPT0Nram2nbtFyFUcPRDkXUYO8YSlZWXbUXB6qAp6ecKVqXrO4vWaVYhRJ2Ubt3xX1rYefeNJTqRteSwwgivv7N3wJLxiMqTLb8f6cx4felWT9UOHz1xZ8YEVF4yxrEaYGcsqZVvz_-O9-0V-tSuPzismXqx7ZBOAemia3pf8JPnSyyD2-TBla4dQCfSow1S0IX8XN43VdQlF_G2lMu3WUp3nNbNmo54nofxo72Ymys3HrtlrgkUD4U-ep73l4EZNaAHoJP9g/p.png?fv_content=true&size_mode=5';
+var editIcon = 'https://previews.dropbox.com/p/thumb/AA2gK8AgMk9pHc7VlJW4OWDwFRdbPFbVPkW_BeyCK9v_wRiQvtgHrkhhzzY-K-yViCUMNuYuB7bS14rWwxDBtq8sLp3DuS4t_1QWwrJtfsUiM8ZzYaKxLdPPbJaC4xlj2xQ_Ta-jORnekJwr-ihvawYvjCpx2xwilkVg_8osaVeGTNTTwWzXm7WSqYYk-EUYu_qwy1_jP-Wk4BBYWAqdmopaqZYPw2dksSAAOoUjClRMa77ut1T7TUMqOtsaP1xC1sGuKJWlEpzNjGfvYHRJRiIy7tbn7ExZr0Qz9oLkMLLvXRmhwpyVaE5JtN_0hF4AwVDrW943mVjGQqGdR1_Ok_ietzJ_ZpdXzw6sDe51oBuwuA/p.png?fv_content=true&size_mode=5';
 
 
 if (host === apHost) {
@@ -46,17 +49,20 @@ else if (host === malHost) {
     main();
 }
 else if (host === alHost) {
-    getAlHeader();
+    getSPAHeader('div.content h1');
+}
+else if (host === kHost) {
+    getSPAHeader('.media--title');
 }
 
-function getAlHeader() {
-    header = getElement('div.content h1');
+function getSPAHeader(queryString) {
+    header = getElement(queryString);
 
     if (header) {
         main();
     }
     else {
-        setTimeout(getAlHeader, 300);
+        setTimeout(getSPAHeader, 300, queryString);
     }
 }
 
@@ -70,6 +76,7 @@ function main() {
 
     //Cut anime name
     var animeName;
+    var reff;
 
     if (host === apHost) {
         animeName = getAnimeName();
@@ -77,21 +84,31 @@ function main() {
     else if (host === malHost) {
         animeName = header.childNodes[0].nodeValue;
     }
+    else if (host === kHost) {
+        animeName = getAnimeName(header.firstElementChild);
+        reff = header.firstElementChild;
+        extractNameOnChange();
+    }
     else if (host === alHost) {
         animeName = getAnimeName();
+        extractNameOnChange();
+    }
+
+    function extractNameOnChange() {
         document.addEventListener('click', () => {
-            if (getAnimeName() !== animeName) {
-                animeName = getAnimeName();
+            if (getAnimeName(reff) !== animeName) {
+                animeName = getAnimeName(reff);
                 var urlsObjs = setSearchURLs();
                 var animeButtons = document.querySelectorAll('.animeButton');
                 var customButtonsObjs = getAnimeButtonsFromStorage();
 
                 animeButtons.forEach(b => {
                     if (b.className.includes('stockButton')) {
-                        b.href = urlsObjs.find(o => `animeButton${makeButtonId(o.n)}` === b.id).u;
+                        b.href = urlsObjs.find(o => o.n === b.title).u;
                     }
                     else {
-                        b.href = customButtonsObjs.find(o => `animeButton${makeButtonId(o.title)}` === b.id).url.replace('ANIMENAME', animeName);
+                        b.href = customButtonsObjs.find(o => o.title === b.title).url
+                            .replace('ANIMENAME', animeName);
                     }
                 });
             }
@@ -99,8 +116,8 @@ function main() {
     }
 
 
-    function getAnimeName() {
-        return header.textContent.trim();
+    function getAnimeName(ref = header) {
+        return ref.textContent.trim();
     }
 
 
@@ -128,21 +145,23 @@ function main() {
     var malSearchUrl;
     var alSearchUrl;
     var apSearchUrl;
+    var kSearchUrl;
     var ytSearchUrl;
     var gSearchUrl;
     var nySearchUrl;
     var kaSearchUrl;
 
     function setSearchURLs() {
-        malSearchUrl = 'http://myanimelist.net/anime.php?q=' + animeName;
-        alSearchUrl = 'https://anilist.co/search/anime?search=' + animeName + '&sort=SEARCH_MATCH';
-        apSearchUrl = 'https://www.anime-planet.com/anime/all?name=' + animeName;
-        ytSearchUrl = 'https://www.youtube.com/results?search_query=' + animeName + ' trailer';
-        gSearchUrl = 'https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=' + animeName;
-        nySearchUrl = 'https://nyaa.si/?f=0&c=0_0&q=' + animeName;
-        kaSearchUrl = 'https://kissanime.ru/Search/Anime?keyword=' + animeName;
+        malSearchUrl = `http://myanimelist.net/anime.php?q=${animeName}`;
+        alSearchUrl = `https://anilist.co/search/anime?search=${animeName}&sort=SEARCH_MATCH'`;
+        apSearchUrl = `https://www.anime-planet.com/anime/all?name=${animeName}`;
+        kSearchUrl = `https://kitsu.io/anime?text=${animeName}`;
+        ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer'`;
+        gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
+        nySearchUrl = `https://nyaa.si/?f=0&c=0_0&q=${animeName}`;
+        kaSearchUrl = `https://kissanime.ru/Search/Anime?keyword=${animeName}`;
 
-        return [{ n: malTitle, u: malSearchUrl }, { n: apTitle, u: apSearchUrl }, { n: ytTitle, u: ytSearchUrl },
+        return [{ n: malTitle, u: malSearchUrl }, { n: alTitle, u: alSearchUrl }, { n: apTitle, u: apSearchUrl }, { n: kTitle, u: kSearchUrl }, { n: ytTitle, u: ytSearchUrl },
         { n: gTitle, u: gSearchUrl }, { n: nyTitle, u: nySearchUrl }, { n: kaTitle, u: kaSearchUrl }];
     }
 
@@ -165,6 +184,11 @@ function main() {
     var apTitle = "Search Anime-Planet";
 
     var apButton = creteButton(icon, apSearchUrl, apTitle, true);
+
+    //Kitsu Button
+    var kTitle = "Search Kitsu";
+
+    var kButton = creteButton(icon, kSearchUrl, kTitle, true);
 
 
     //YouTube Button
@@ -192,12 +216,12 @@ function main() {
 
 
     //Edit button
-    alTitle = "Edit Custom Buttons";
+    var ebTitle = "Edit Custom Buttons";
 
-    var arrowButtonImg = createHTMLElement('img', null, 'arrowButton', [{ n: 'src', v: arrowIcon }, { n: 'title', v: alTitle },
+    var arrowButtonImg = createHTMLElement('img', null, 'arrowButton', [{ n: 'src', v: arrowIcon }, { n: 'title', v: ebTitle },
     { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
 
-    var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: alTitle },
+    var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: ebTitle },
     { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;opacity:0;' }]);
 
     var editButton = createHTMLElement('div', null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
@@ -241,15 +265,19 @@ function main() {
 
     //Add Website Buttons
     if (host === apHost) {
-        appendButtons([malButton, alButton]);
+        appendButtons([malButton, alButton, kButton]);
         getElement('.animeButtons').parentElement.style.top = '6px';
     }
     else if (host === alHost) {
-        appendButtons([malButton, apButton]);
+        appendButtons([malButton, apButton, kButton]);
         getElement('.animeButtons').parentElement.style.top = '8px';
     }
     else if (host === malHost) {
-        appendButtons([apButton, alButton]);
+        appendButtons([apButton, alButton, kButton]);
+        getElement('.animeButtons').parentElement.style.top = '2px';
+    }
+    else if (host === kHost) {
+        appendButtons([malButton, apButton, alButton]);
         getElement('.animeButtons').parentElement.style.top = '2px';
     }
 
@@ -639,12 +667,13 @@ function main() {
         var titleInput = createHTMLElement('input', null, 'titleInput', [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style }]);
         var URLTitle = createHTMLElement('h3', 'Search URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
         var URLQm = createHTMLElement('img', null, 'URLQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
-        var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox', [{ n: 'style', v: 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;' }]);
+        var infoBoxStyle = 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;';
+        var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
         appendChildren(URLTitle, [URLQm, URLInfoBox]);
         var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
         var iconTitle = createHTMLElement('h3', 'Icon URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
         var iconQm = createHTMLElement('img', null, 'iconQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
-        var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox', [{ n: 'style', v: 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;' }]);
+        var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
         iconInfoBox.innerHTML = '(<b>Leave empty for automatic icon parse</b>)<br />Link to icon for the button. <br />The easiest way to get it is to copy this link "https://www.google.com/s2/favicons?domain=" and place the website url at the end (example: https://www.google.com/s2/favicons?domain=myanimelist.net).';
         appendChildren(iconTitle, [iconQm, iconInfoBox]);
         var iconInput = createHTMLElement('input', null, 'iconInput', [{ n: 'placeholder', v: 'Icon URL' }, { n: 'style', v: style + 'width:80%' }]);
@@ -707,7 +736,7 @@ function main() {
             var imgUrl = b.firstElementChild.getAttribute('src');
             var img = createHTMLElement('img', null, null, [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
             var hideIcon = createHTMLElement('img', null, 'hideButton', [{ n: 'src', v: iconEye }, { n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 82%;' }]);
-            var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://previews.dropbox.com/p/thumb/AAv_J1gX163dhysBBA0GBSGRBMMdRoTT2EVqs_xTg5PdES0EF5geKh9gJg0kCbmtTGSzjkZFZQ6qCVpKFmUKobTWUTYu-t6yYVdWg_ldZE8GBUfXu0NWx3q0RfyeelWLgApIOskJParENLlfHXLyKT_FeTPtESh3rNqWCr-7iY1v_snaIZo5WsajqOSeUoJ3jS6M0_lD_PN410Xv-hUbqlNejWUNJDoWz9nkQdhzLX3bFpErrb75jnys7fwG8NV0YYL-HDOKCOFnh0MCviaq_r-YeioUpcwdxVXv9AnHdgsfGnTSmfVdgY6oG5nk0IOjDfYs_R9-3zcOz5pClF6-9uM6/p.png?fv_content=true&size_mode=5' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
+            var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://previews.dropbox.com/p/thumb/AA2lORLH9aTzyG201-oJuCGG1DRv3z9jhTd1wQXVJ-_tf4xUvGmULl6n2Q1e8ev7L6Nip2jPQPG_XL7EfnlF_T9KttFCm090rcb4zaq8C-6qLjhDl1Rs5OfseAy1Sq8f1VxhBNHrpn1QOCIpRhxht1Uj8cB6oj_MmQA_iWdkKNqoyu3okiMV6f6-6pCL4-uJrpoLW68upxkrZZlH8kuPvQEbpvbWOWoQCib1WIuKT_Q3WVfJ3QOSMWzJsUWSk9ps0lyBYJ1LFwSeI2BG4ak7f67NRwI5jIMehpFghrdzgHnbxkX9l8-haQ7drRojBTyFKzfKVmKDUGRrUqXA0ZBLrfCcBBWxAB5GsBWl86BdQjiYcQ/p.png?fv_content=true&size_mode=5' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
             var span = createHTMLElement('span', b.getAttribute('title'), null, [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
 
             if (b.style.display === 'none') {
