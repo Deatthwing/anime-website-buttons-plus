@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu and Anilist for searching various sites.
-// @version     2.601
+// @version     2.605
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -34,10 +34,10 @@ var hideList = [];
 var buttDivLeft = 0;
 var autoHide = GM_getValue('setting:autoHide', false);
 
-var iconEyeGray = 'https://previews.dropbox.com/p/thumb/AA2t3aKCs5ewg_5COcV7iXulMcNMAGsoQasJtushSpwGeU308fSykHxETdtl6aHwdXt8tdM5EwTK6pad4TUTpB30ZbBJwyvN_vmEa6HnbriUmXBoaQcVGCEUcWKiSak-vBspfLHKXs-bkACHP83VSmuvGwJNvQlc10_UsH-LMIph7YwoawujdVHhTUE5LQ0MJVaxBAa-u-J4pS3vVJOPp55rk-bs1SXmnANg3rswMyPCIFK8l0ZZ01xIRPDf9EU6tOuSomxEHkFNimmHgpbEm9YZBxc8JpQa8H90q65NfTcybtyQIRW7S2MsH-VINlKq5ihWhD7T5DsmchwlFrk1eB_JeAgYri9W5g1AocLovjopMg/p.png?fv_content=true&size_mode=5';
-var iconEye = 'https://previews.dropbox.com/p/thumb/AA1V6BjYFH9uWwomKZZdnUpLeQuuzBeUmJoYnrmqx99kMZYnMJrN_sr471fAHaPDgLgScKNFcQxQqLPiqcNYxFItW1-qtxv48Sf-OJe1-EzB-6mm9Qljlcehww5HFzO6nlcxHcrSRJ8ExaL3pjCM4wm5YsLqXENnUPOI-VNHMpFSdJQGDxw884z30XuC4xQ6d6Z4aUWGZgMnrVSQXNlQPsyVew1LDTLxDHgjjUsyhuJPbhuUvZTMaEJdEvEA1ionmb6eP7Cmgca6AiE7at_RNS0oypjDd3xKErEzyWJIdKLZFJBBanLOf29O15NdiMsxH3ubdDaDod-ZTMXCFHo4FJC7s4YJN9XENsS-fHFsFVaLWA/p.png?fv_content=true&size_mode=5';
-var arrowIcon = 'https://previews.dropbox.com/p/thumb/AA2xGn4gG5_oG0dBkwKiUUKPgC354gM0-cGU_hxtn3B7h33pTeB7aLXHsv01myLzDePpeEqU-Z4yybgEh8MZOL9Ssb0odTf2sGbuebPT0Nram2nbtFyFUcPRDkXUYO8YSlZWXbUXB6qAp6ecKVqXrO4vWaVYhRJ2Ubt3xX1rYefeNJTqRteSwwgivv7N3wJLxiMqTLb8f6cx4felWT9UOHz1xZ8YEVF4yxrEaYGcsqZVvz_-O9-0V-tSuPzismXqx7ZBOAemia3pf8JPnSyyD2-TBla4dQCfSow1S0IX8XN43VdQlF_G2lMu3WUp3nNbNmo54nofxo72Ymys3HrtlrgkUD4U-ep73l4EZNaAHoJP9g/p.png?fv_content=true&size_mode=5';
-var editIcon = 'https://previews.dropbox.com/p/thumb/AA2gK8AgMk9pHc7VlJW4OWDwFRdbPFbVPkW_BeyCK9v_wRiQvtgHrkhhzzY-K-yViCUMNuYuB7bS14rWwxDBtq8sLp3DuS4t_1QWwrJtfsUiM8ZzYaKxLdPPbJaC4xlj2xQ_Ta-jORnekJwr-ihvawYvjCpx2xwilkVg_8osaVeGTNTTwWzXm7WSqYYk-EUYu_qwy1_jP-Wk4BBYWAqdmopaqZYPw2dksSAAOoUjClRMa77ut1T7TUMqOtsaP1xC1sGuKJWlEpzNjGfvYHRJRiIy7tbn7ExZr0Qz9oLkMLLvXRmhwpyVaE5JtN_0hF4AwVDrW943mVjGQqGdR1_Ok_ietzJ_ZpdXzw6sDe51oBuwuA/p.png?fv_content=true&size_mode=5';
+var iconInvisible = 'https://www.flaticon.com/svg/static/icons/svg/565/565655.svg';
+var iconVisible = 'https://www.flaticon.com/svg/static/icons/svg/565/565654.svg';
+var arrowIcon = 'https://www.flaticon.com/svg/static/icons/svg/271/271228.svg';
+var editIcon = 'https://www.flaticon.com/svg/static/icons/svg/565/565722.svg';
 
 
 if (host === apHost) {
@@ -45,7 +45,7 @@ if (host === apHost) {
     main();
 }
 else if (host === malHost) {
-    header = getElement('#contentWrapper span span');
+    header = getElement('h1.title-name strong');
     main();
 }
 else if (host === alHost) {
@@ -82,7 +82,7 @@ function main() {
         animeName = getAnimeName();
     }
     else if (host === malHost) {
-        animeName = header.childNodes[0].nodeValue;
+        animeName = getAnimeName();
     }
     else if (host === kHost) {
         animeName = getAnimeName(header.firstElementChild);
@@ -137,6 +137,7 @@ function main() {
         if (isStock) {
             button.className += ' stockButton';
         }
+
         button.appendChild(buttImg);
         return button;
     }
@@ -149,7 +150,6 @@ function main() {
     var ytSearchUrl;
     var gSearchUrl;
     var nySearchUrl;
-    var kaSearchUrl;
 
     function setSearchURLs() {
         malSearchUrl = `http://myanimelist.net/anime.php?q=${animeName}`;
@@ -159,11 +159,10 @@ function main() {
         ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer'`;
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
         nySearchUrl = `https://nyaa.si/?f=0&c=0_0&q=${animeName}`;
-        kaSearchUrl = `https://kissanime.ru/Search/Anime?keyword=${animeName}`;
 
         return [{ n: malTitle, u: malSearchUrl }, { n: alTitle, u: alSearchUrl },
         { n: apTitle, u: apSearchUrl }, { n: kTitle, u: kSearchUrl }, { n: ytTitle, u: ytSearchUrl },
-        { n: gTitle, u: gSearchUrl }, { n: nyTitle, u: nySearchUrl }, { n: kaTitle, u: kaSearchUrl }];
+        { n: gTitle, u: gSearchUrl }, { n: nyTitle, u: nySearchUrl }];
     }
 
     setSearchURLs();
@@ -210,12 +209,6 @@ function main() {
     var nyButton = creteButton(icon, nySearchUrl, nyTitle, true);
 
 
-    //KissAnime button
-    var kaTitle = "Search KissAnime";
-
-    var kaButton = creteButton(icon, kaSearchUrl, kaTitle, true);
-
-
     //Edit button
     var ebTitle = "Edit Custom Buttons";
 
@@ -245,6 +238,7 @@ function main() {
 
     if (!(GM_listValues()).includes('setting:buttonsNames')) {
         var values = GM_listValues();
+
         for (var i = 0; i < values.length; i++) {
             if (!values[i].includes('setting:')) {
                 customButtonsObj.push(JSON.parse(GM_getValue(values[i], '{}')));
@@ -286,7 +280,7 @@ function main() {
     function appendButtons(mainButtonsArray) {
         header.appendChild(document.createTextNode(" "));
 
-        var allButtons = mainButtonsArray.concat([ytButton, giButton, nyButton, kaButton], customButtons, editButton);
+        var allButtons = mainButtonsArray.concat([ytButton, giButton, nyButton], customButtons, editButton);
         var buttonsDiv = createHTMLElement('div', null, 'animeButtons', [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
         var outerButtonsDiv = createHTMLElement('div', null, null, [{ n: 'style', v: 'display:inline-block;position:relative;overflow:hidden;' }]);
 
@@ -315,6 +309,7 @@ function main() {
 
     function getHideList() {
         var hideListNew;
+
         if ((GM_listValues()).includes('hideList')) {
             hideListNew = GM_getValue('hideList', '[]');
             GM_deleteValue('hideList');
@@ -333,9 +328,11 @@ function main() {
     function concatHideList(v) {
         v.forEach(b => {
             var item = hideList.find(n => n.bId === b.bId);
+
             if (item) {
                 return Object.assign(item, b);
             }
+
             hideList.push(b);
         });
     }
@@ -360,6 +357,7 @@ function main() {
 
     function makeButtonId(buttonName) {
         var result = 0;
+        
         for (var i = 0; i < buttonName.length; i++) {
             result += buttonName.charCodeAt(i);
         }
@@ -577,12 +575,12 @@ function main() {
             if (button.style.display === 'none') {
                 button.style.display = '';
                 concatHideList([{ bId: button.id, h: 'show' }]);
-                target.setAttribute('src', iconEye);
+                target.setAttribute('src', iconVisible);
             }
             else {
                 button.style.display = 'none';
                 concatHideList([{ bId: button.id, h: 'hide' }]);
-                target.setAttribute('src', iconEyeGray);
+                target.setAttribute('src', iconInvisible);
             }
 
             GM_setValue('setting:hideList', JSON.stringify(hideList));
@@ -645,7 +643,7 @@ function main() {
     }
 
     function addButtonPopup() {
-        var questionmarkIcon = 'https://previews.dropbox.com/p/thumb/AA3pWSY__qYLK52QXj1y6ciDLqfQZhwmchbpXZ8LZuw7WES_RxubF0RqFGDd7PTZ5MF4S5lmo2FoqT1Uc-94jOTVWJcv2IB4O3NMpqeM9ZGOk1I7d2kR9LhlrxA797nOmPKtK0GZO3axIbEP8udQJ9nbTDJAhrBx6uvQWPF9AYFJmA-3NL0UsztdTlyyVGGOvz4rXAyKBFwRAxUTiSZnEfMVQhoX-2o23zR8NQHBVqF5v3n-VZ79WMJul9jgdTG-41-aFeScr4iyHmI417_MlqMKkklZBKJ7fOlEuVhpDKKyNNwEcM9r_TMkFIcDM59FbGgXRQtBzIXKSszPXdZoFiHM_sPEeZl8zduQRMLcAc7wig/p.png?size=2048x1536&size_mode=3';
+        var questionmarkIcon = 'https://www.flaticon.com/svg/static/icons/svg/1828/1828940.svg';
 
         var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
         var popUp = createHTMLElement('div', null, 'buttonPopup', [{ n: 'style', v: 'position:absolute;top:-100%;left:50%;margin-top:-280px;margin-left:-200px;background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
@@ -736,12 +734,12 @@ function main() {
             var listEl = createHTMLElement('li', null, b.id, [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
             var imgUrl = b.firstElementChild.getAttribute('src');
             var img = createHTMLElement('img', null, null, [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
-            var hideIcon = createHTMLElement('img', null, 'hideButton', [{ n: 'src', v: iconEye }, { n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 82%;' }]);
-            var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://previews.dropbox.com/p/thumb/AA2lORLH9aTzyG201-oJuCGG1DRv3z9jhTd1wQXVJ-_tf4xUvGmULl6n2Q1e8ev7L6Nip2jPQPG_XL7EfnlF_T9KttFCm090rcb4zaq8C-6qLjhDl1Rs5OfseAy1Sq8f1VxhBNHrpn1QOCIpRhxht1Uj8cB6oj_MmQA_iWdkKNqoyu3okiMV6f6-6pCL4-uJrpoLW68upxkrZZlH8kuPvQEbpvbWOWoQCib1WIuKT_Q3WVfJ3QOSMWzJsUWSk9ps0lyBYJ1LFwSeI2BG4ak7f67NRwI5jIMehpFghrdzgHnbxkX9l8-haQ7drRojBTyFKzfKVmKDUGRrUqXA0ZBLrfCcBBWxAB5GsBWl86BdQjiYcQ/p.png?fv_content=true&size_mode=5' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
+            var hideIcon = createHTMLElement('img', null, 'hideButton', [{ n: 'src', v: iconVisible }, { n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 82%;' }]);
+            var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://www.flaticon.com/svg/static/icons/svg/1345/1345874.svg' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
             var span = createHTMLElement('span', b.getAttribute('title'), null, [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
 
             if (b.style.display === 'none') {
-                hideIcon.setAttribute('src', iconEyeGray);
+                hideIcon.setAttribute('src', iconInvisible);
             }
 
             appendChildren(listEl, [img, hideIcon, span]);
