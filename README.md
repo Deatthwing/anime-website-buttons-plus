@@ -1,7 +1,7 @@
 # anime-website-buttons-plus
 <b>Now supports custom buttons!</b>
 
-A script that adds buttons on Anime Planet, MAL and Anilist for searching on Youtube, Google images, KissAnime and Nyaa. Probably will add more buttons in the future.
+A script that adds buttons on Anime Planet, MAL and Anilist for searching on Youtube, Google images and Nyaa. Probably will add more buttons in the future.
 If that's not enough for you, now you can add your own buttons! Also you can hide the ones you don't want.<br>
 Buttons can auto hide and show only on mouse-over.
 
