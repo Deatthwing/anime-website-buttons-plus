@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.700
+// @version     2.703
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -62,7 +62,7 @@ else if (host === kHost) {
     headerQueryString = '.media--title';
     getSPAHeader('.media--title');
 }
-else if (host === adHost){
+else if (host === adHost) {
     header = getElement('h1.anime');
     headerQueryString = 'h1.anime';
     main();
@@ -97,7 +97,7 @@ function main() {
     if (host === apHost || host === malHost) {
         animeName = getAnimeName();
     }
-    else if (host === adHost){
+    else if (host === adHost) {
         animeName = getAnimeName().replace('Anime: ', '');
     }
     else if (host === kHost) {
@@ -122,7 +122,7 @@ function main() {
                 else {
                     animeButtonsDiv.style.display = 'block';
                 }
-                if (host === kHost){
+                if (host === kHost) {
                     reff = header.firstElementChild;
                 }
                 if (getAnimeName(reff) !== animeName) {
@@ -432,6 +432,7 @@ function hideEditButton() {
     if (autoHide) {
         var buttonsDiv = getElement('.animeButtons');
         var arrowButton = getElement('.arrowButton');
+        hideButtons();
         buttonsDiv.style.left = `-${buttDivLeft * 18}px`;
         arrowButton.style.opacity = '1';
     }
@@ -527,7 +528,7 @@ function addButtonLogic() {
     var searchField = getElement('.URLInput');
     var iconField = getElement('.iconInput');
 
-    var buttonsNames = getAnimeButtonsFromStorage();
+    var buttons = getAnimeButtonsFromStorage();
 
     if (titleField.value === '') {
         toggleMsgBox(true, 'Title cannot be empty!');
@@ -535,7 +536,10 @@ function addButtonLogic() {
     else if (searchField.value === '') {
         toggleMsgBox(true, 'Search URL cannot be empty!');
     }
-    else if (buttonsNames.find((o) => o.title === titleField.value)) {
+    else if (!searchField.value.includes('ANIMENAME')) {
+        toggleMsgBox(true, 'Search URL must contain ANIEMNAME!')
+    }
+    else if (buttons.find((o) => o.title === titleField.value)) {
         toggleMsgBox(true, 'Button with the same name already exists!');
     }
     else {
@@ -549,14 +553,14 @@ function addButtonLogic() {
             icon: iconField.value
         };
 
-        buttonsNames.push(newButton);
+        buttons.push(newButton);
 
-        setAnimeButtonsToStorage(buttonsNames);
-
-        toggleMsgBox(true, `Button ${titleField.value} added succsessfully! Reload to see it!`, true);
+        setAnimeButtonsToStorage(buttons);
 
         hideList.push({ bId: `animeButton${makeButtonId(titleField.value)}`, h: 'show' });
         GM_setValue('setting:hideList', JSON.stringify(hideList));
+
+        toggleMsgBox(true, `Button ${titleField.value} added succsessfully! Reload to see it!`, true);
 
         titleField.value = '';
         searchField.value = '';
