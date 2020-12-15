@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.703
+// @version     2.705
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -22,7 +22,6 @@
 // ==/UserScript==
 
 
-//Find h1
 var header;
 var headerQueryString = '';
 var outerButtonsDiv;
@@ -90,7 +89,6 @@ function addHeaderEventListeners() {
 
 
 function main() {
-    //Cut anime name
     var animeName;
     var reff;
 
@@ -151,7 +149,7 @@ function main() {
     }
 
     function getAnimeName(ref = header) {
-        return ref.textContent.trim();
+        return ref.textContent.replace('(TV)', '').trim();
     }
 
 
@@ -188,11 +186,11 @@ function main() {
 
     function setSearchURLs() {
         malSearchUrl = `http://myanimelist.net/anime.php?q=${animeName}`;
-        alSearchUrl = `https://anilist.co/search/anime?search=${animeName}&sort=SEARCH_MATCH'`;
+        alSearchUrl = `https://anilist.co/search/anime?search=${animeName}&sort=SEARCH_MATCH`;
         apSearchUrl = `https://www.anime-planet.com/anime/all?name=${animeName}`;
         kSearchUrl = `https://kitsu.io/anime?text=${animeName}`;
-        adSearchUrl = `https://anidb.net/anime/?adb.search=${animeName}&do.search=1`
-        ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer'`;
+        adSearchUrl = `https://anidb.net/anime/?adb.search=${animeName}&do.search=1`;
+        ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer`;
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
         nySearchUrl = `https://nyaa.si/?f=0&c=0_0&q=${animeName}`;
 
@@ -268,7 +266,7 @@ function main() {
 
     addHeaderEventListeners();
 
-    appendChildren(editButton, [editButtonImg, arrowButtonImg]);
+    editButton.append(editButtonImg, arrowButtonImg);
 
     editButton.addEventListener('click', () => { togglePopup(true); });
 
@@ -297,7 +295,6 @@ function main() {
     });
 
 
-
     //Add Website Buttons
     if (host === apHost) {
         appendButtons([malButton, alButton, kButton, adButton]);
@@ -323,14 +320,15 @@ function main() {
     function appendButtons(mainButtonsArray) {
         header.appendChild(document.createTextNode(" "));
 
-        var allButtons = mainButtonsArray.concat([ytButton, giButton, nyButton], customButtons, editButton);
+        var allButtonsArray = mainButtonsArray.concat([ytButton, giButton, nyButton], customButtons, editButton);
         var buttonsDiv = createHTMLElement('div', null, 'animeButtons', [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
         outerButtonsDiv = createHTMLElement('div', null, null, [{ n: 'style', v: 'display:inline-block;position:relative;overflow:hidden;' }]);
 
-        appendChildren(buttonsDiv, allButtons);
+        // buttonsDiv.appendChild(allButtonsArray);
         outerButtonsDiv.appendChild(buttonsDiv);
 
-        allButtons.forEach((b) => {
+        allButtonsArray.forEach((b) => {
+            buttonsDiv.appendChild(b);
             if (b.id !== '') {
                 hideList.push({
                     bId: b.id,
@@ -537,7 +535,7 @@ function addButtonLogic() {
         toggleMsgBox(true, 'Search URL cannot be empty!');
     }
     else if (!searchField.value.includes('ANIMENAME')) {
-        toggleMsgBox(true, 'Search URL must contain ANIEMNAME!')
+        toggleMsgBox(true, 'Search URL must contain ANIMENAME!');
     }
     else if (buttons.find((o) => o.title === titleField.value)) {
         toggleMsgBox(true, 'Button with the same name already exists!');
@@ -705,7 +703,7 @@ function addButtonPopup() {
     var editTabText = createHTMLElement('div', 'EDIT', 'editTabText', [{ n: 'style', v: textTabsStyle }]);
     editTab.appendChild(editTabText);
 
-    appendChildren(tabs, [addTab, editTab]);
+    tabs.append(addTab, editTab);
 
     var addSection = createHTMLElement('div', null, 'addSection', [{ n: 'style', v: 'height:100%;width:100%;transition: all 0.2s linear 0s;' }]);
     var addSectionTitle = createHTMLElement('h2', 'ADD CUSTOM BUTTON', null, [{ n: 'style', v: style + 'margin-top: 25px' }]);
@@ -715,20 +713,20 @@ function addButtonPopup() {
     var URLQm = createHTMLElement('img', null, 'URLQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
     var infoBoxStyle = 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;';
     var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
-    appendChildren(URLTitle, [URLQm, URLInfoBox]);
+    URLTitle.append(URLQm, URLInfoBox);
     var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
     var iconTitle = createHTMLElement('h3', 'Icon URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
     var iconQm = createHTMLElement('img', null, 'iconQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
     var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
     iconInfoBox.innerHTML = '(<b>Leave empty for automatic icon parse</b>)<br />Link to icon for the button. <br />The easiest way to get it is to copy this link "https://www.google.com/s2/favicons?domain=" and place the website url at the end (example: https://www.google.com/s2/favicons?domain=myanimelist.net).';
-    appendChildren(iconTitle, [iconQm, iconInfoBox]);
+    iconTitle.append(iconQm, iconInfoBox);
     var iconInput = createHTMLElement('input', null, 'iconInput', [{ n: 'placeholder', v: 'Icon URL' }, { n: 'style', v: style + 'width:80%' }]);
 
     var msgBoxDiv = createHTMLElement('div', null, 'addMsgBox', [{ n: 'style', v: 'width: 86%;position: absolute;margin-left: 7%;bottom: 150%;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.4) 0px 0px 15px;text-align: center;transition: opacity 0.2s linear;opacity:0' }]);
     var msgText = createHTMLElement('div', 'Button added succsessfully! Reload to see it!', 'addMgsText', [{ n: 'style', v: 'margin: 10px;' }]);
     var reloadButton = createHTMLElement('button', 'RELOAD', 'reloadButton', [{ n: 'style', v: 'margin: 10px;margin-right:0px;width:90px;' }]);
     var closeButton = createHTMLElement('button', 'CLOSE', 'closeButton', [{ n: 'style', v: 'margin: 10px;width:90px;' }]);
-    appendChildren(msgBoxDiv, [msgText, reloadButton, closeButton]);
+    msgBoxDiv.append(msgText, reloadButton, closeButton);
 
     var buttonsDiv = createHTMLElement('div', null, 'addAndCancelButtons', [{ n: 'style', v: style + 'bottom:10px;position:absolute;width:100%' }]);
     var addButton = createHTMLElement('button', 'ADD', 'addButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
@@ -747,7 +745,9 @@ function addButtonPopup() {
     }
 
     var hideEditCheckboxLabel = createHTMLElement('label', 'Auto hide buttons (show on mouseover)', null, [{ n: 'for', v: 'editCheckbox' }, { n: 'style', v: 'padding-left:5px;' }]);
-    appendChildren(settingsDiv, [hideEditCheckbox, hideEditCheckboxLabel]);
+    // var exportButton = createHTMLElement('div', 'Export custom buttons.');
+    // exportButton.addEventListener('click', exportCustomButtons);
+    settingsDiv.append(hideEditCheckbox, hideEditCheckboxLabel);
 
     var editButtonsDiv = createHTMLElement('div', null, 'addAndCancelButtons', [{ n: 'style', v: style + 'bottom:10px;position:absolute;width:100%' }]);
     var cancelButtonEdit = createHTMLElement('button', 'CLOSE', 'cancelButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
@@ -756,12 +756,12 @@ function addButtonPopup() {
     createAndAppendEditListEntry(animeButtonsList, animeButtons);
 
     popUp.appendChild(tabs);
-    appendChildren(buttonsDiv, [addButton, cancelButton]);
-    appendChildren(addSection, [addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput, msgBoxDiv, buttonsDiv]);
+    buttonsDiv.append(addButton, cancelButton);
+    addSection.append(addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput, msgBoxDiv, buttonsDiv);
 
-    appendChildren(editSection, [editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv]);
+    editSection.append(editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv);
 
-    appendChildren(popUp, [addSection, editSection]);
+    popUp.append(addSection, editSection);
     var html = getElement('html');
     html.appendChild(popUp);
 
@@ -789,7 +789,7 @@ function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
             hideIcon.setAttribute('src', iconInvisible);
         }
 
-        appendChildren(listEl, [img, hideIcon, span]);
+        listEl.append(img, hideIcon, span);
 
         if (!b.className.includes('stockButton')) {
             listEl.insertBefore(removeIcon, span);
@@ -797,6 +797,22 @@ function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
         }
         animeButtonsList.appendChild(listEl);
     });
+}
+
+function exportCustomButtons() {
+    var customButtonsStr = GM_getValue('setting:buttonsNames', '[]');
+    downloadJson(`custom-buttons-plus-export-${new Date().toISOString()}`, customButtonsStr);
+}
+
+function downloadJson(filename, jsonString) {
+    var element = createHTMLElement('a', null, null,
+        [{ n: 'href', v: 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonString) },
+        { n: 'download', v: `${filename}.json` }]);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
 
 function createHTMLElement(tag, textContent, className, attributes) {
@@ -815,10 +831,4 @@ function createHTMLElement(tag, textContent, className, attributes) {
     }
 
     return element;
-}
-
-function appendChildren(element, children) {
-    children.forEach((c) => {
-        element.appendChild(c);
-    });
 }
