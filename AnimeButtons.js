@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.705
+// @version     2.706
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -44,26 +44,26 @@ var editIcon = 'https://www.flaticon.com/svg/static/icons/svg/565/565722.svg';
 
 
 if (host === apHost) {
-    header = getElement("#siteContainer h1");
     headerQueryString = '#siteContainer h1';
+    header = getElement(headerQueryString);
     main();
 }
 else if (host === malHost) {
-    header = getElement('h1.title-name strong');
     headerQueryString = 'h1.title-name strong';
+    header = getElement(headerQueryString);
     main();
 }
 else if (host === alHost) {
     headerQueryString = 'div.content h1';
-    getSPAHeader('div.content h1');
+    getSPAHeader(headerQueryString);
 }
 else if (host === kHost) {
     headerQueryString = '.media--title';
-    getSPAHeader('.media--title');
+    getSPAHeader(headerQueryString);
 }
 else if (host === adHost) {
-    header = getElement('h1.anime');
     headerQueryString = 'h1.anime';
+    header = getElement(headerQueryString);
     main();
 }
 
@@ -131,7 +131,7 @@ function main() {
 
                     animeButtons.forEach(b => {
                         if (b.className.includes('stockButton')) {
-                            b.href = urlsObjs.find(o => o.n === b.title).u;
+                            b.href = urlsObjs.find(o => o.name === b.title).url;
                         }
                         else {
                             b.href = customButtonsObjs.find(o => o.title === b.title).url
@@ -192,11 +192,11 @@ function main() {
         adSearchUrl = `https://anidb.net/anime/?adb.search=${animeName}&do.search=1`;
         ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer`;
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
-        nySearchUrl = `https://nyaa.si/?f=0&c=0_0&q=${animeName}`;
+        nySearchUrl = `https://nyaa.si/?f=0&c=1_2&q=${animeName}`;
 
-        return [{ n: malTitle, u: malSearchUrl }, { n: alTitle, u: alSearchUrl },
-        { n: apTitle, u: apSearchUrl }, { n: kTitle, u: kSearchUrl }, { n: adTitle, u: adSearchUrl },
-        { n: ytTitle, u: ytSearchUrl }, { n: gTitle, u: gSearchUrl }, { n: nyTitle, u: nySearchUrl }];
+        return [{ name: malTitle, url: malSearchUrl }, { name: alTitle, url: alSearchUrl },
+        { name: apTitle, url: apSearchUrl }, { name: kTitle, url: kSearchUrl }, { name: adTitle, url: adSearchUrl },
+        { name: ytTitle, url: ytSearchUrl }, { name: gTitle, url: gSearchUrl }, { name: nyTitle, url: nySearchUrl }];
     }
 
     setSearchURLs();
@@ -684,7 +684,7 @@ function hideInfoBox(infoBox) {
 
 function showInfoBox(infoBox) {
     infoBox.style.display = 'inline-block';
-    setTimeout(() => infoBox.style.opacity = '1', 100);
+    setTimeout(() => infoBox.style.opacity = '1', 10);
 }
 
 function addButtonPopup() {
@@ -693,7 +693,7 @@ function addButtonPopup() {
     var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
     var popUp = createHTMLElement('div', null, 'buttonPopup', [{ n: 'style', v: 'position:absolute;top:-100%;left:50%;margin-top:-280px;margin-left:-200px;background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
 
-    var tabs = createHTMLElement('div', null, 'popupTabs', [{ n: 'style', v: 'width: 100%;height: 40px;' }]);
+    var tabs = createHTMLElement('div', null, 'popupTabs', [{ n: 'style', v: 'width: 100%;height: 40px;cursor: default;' }]);
     var addTab = createHTMLElement('div', null, 'addTab', [{ n: 'style', v: 'height: 100%;width: 50%;background-color: white;left: 50%;border-top-left-radius: 8px;text-align: center;transition: all 0.2s linear 0s;' }]);
     var textTabsStyle = 'position: relative;top: 11px;font-weight: bold;';
     var addTabText = createHTMLElement('div', 'ADD', 'addTabText', [{ n: 'style', v: textTabsStyle }]);
