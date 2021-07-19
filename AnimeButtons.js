@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.706
+// @version     2.707
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -104,7 +104,7 @@ function main() {
         extractNameOnChange();
     }
     else if (host === alHost) {
-        animeName = getAnimeName();
+        animeName = getAnimeName(header.firstChild);
         extractNameOnChange();
     }
 
