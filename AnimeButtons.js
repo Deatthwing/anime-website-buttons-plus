@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.707
+// @version     2.800
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -154,7 +154,8 @@ function main() {
 
 
     function creteButton(icon, searchUrl, title, isStock) {
-        var buttImg = createHTMLElement("img", null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }]);
+        var buttImg = createHTMLElement("img", null, null,
+            [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }]);
 
         if (icon) {
             buttImg.src = icon;
@@ -257,7 +258,8 @@ function main() {
     var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: ebTitle },
     { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;opacity:0;' }]);
 
-    var editButton = createHTMLElement('div', null, null, [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
+    var editButton = createHTMLElement('div', null, null,
+        [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
 
     if (!autoHide) {
         editButtonImg.style.opacity = '1';
@@ -321,8 +323,10 @@ function main() {
         header.appendChild(document.createTextNode(" "));
 
         var allButtonsArray = mainButtonsArray.concat([ytButton, giButton, nyButton], customButtons, editButton);
-        var buttonsDiv = createHTMLElement('div', null, 'animeButtons', [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
-        outerButtonsDiv = createHTMLElement('div', null, null, [{ n: 'style', v: 'display:inline-block;position:relative;overflow:hidden;' }]);
+        var buttonsDiv = createHTMLElement('div', null, 'animeButtons',
+            [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
+        outerButtonsDiv = createHTMLElement('div', null, null,
+            [{ n: 'style', v: 'display:inline-block;position:relative;overflow:hidden;' }]);
 
         // buttonsDiv.appendChild(allButtonsArray);
         outerButtonsDiv.appendChild(buttonsDiv);
@@ -492,7 +496,7 @@ function hideTabSection(toHide, toShow) {
 
     setTimeout(() => {
         sectionToHide.style.display = 'none';
-        sectionToShow.style.display = 'block';
+        sectionToShow.style.display = 'flex';
         setTimeout(() => sectionToShow.style.opacity = '1', 50);
     }, 200);
 }
@@ -691,50 +695,74 @@ function addButtonPopup() {
     var questionmarkIcon = 'https://www.flaticon.com/svg/static/icons/svg/1828/1828940.svg';
 
     var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
-    var popUp = createHTMLElement('div', null, 'buttonPopup', [{ n: 'style', v: 'position:absolute;top:-100%;left:50%;margin-top:-280px;margin-left:-200px;background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
+    var popUp = createHTMLElement('div', null, 'buttonPopup',
+        [{ n: 'style', v: 'position:fixed;top:-100%;left:50%;transform: translate(-50%, -50%);background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
 
-    var tabs = createHTMLElement('div', null, 'popupTabs', [{ n: 'style', v: 'width: 100%;height: 40px;cursor: default;' }]);
-    var addTab = createHTMLElement('div', null, 'addTab', [{ n: 'style', v: 'height: 100%;width: 50%;background-color: white;left: 50%;border-top-left-radius: 8px;text-align: center;transition: all 0.2s linear 0s;' }]);
+    var tabs = createHTMLElement('div', null, 'popupTabs',
+        [{ n: 'style', v: 'width: 100%;height: 40px;cursor: default;' }]);
+    var addTab = createHTMLElement('div', null, 'addTab',
+        [{ n: 'style', v: 'height: 100%;width: 50%;background-color: white;left: 50%;border-top-left-radius: 8px;text-align: center;transition: all 0.2s linear 0s;' }]);
     var textTabsStyle = 'position: relative;top: 11px;font-weight: bold;';
-    var addTabText = createHTMLElement('div', 'ADD', 'addTabText', [{ n: 'style', v: textTabsStyle }]);
+    var addTabText = createHTMLElement('div', 'ADD', 'addTabText',
+        [{ n: 'style', v: textTabsStyle }]);
     addTab.appendChild(addTabText);
 
-    var editTab = createHTMLElement('div', null, 'editTab', [{ n: 'style', v: 'top: -40px;height: 100%;width: 50%;background-color: #d8d8d8;left: 50%;position: relative;border-top-right-radius: 8px;text-align: center;color: white;transition: all 0.2s linear 0s;' }]);
-    var editTabText = createHTMLElement('div', 'EDIT', 'editTabText', [{ n: 'style', v: textTabsStyle }]);
+    var editTab = createHTMLElement('div', null, 'editTab',
+        [{ n: 'style', v: 'top: -40px;height: 100%;width: 50%;background-color: #d8d8d8;left: 50%;position: relative;border-top-right-radius: 8px;text-align: center;color: white;transition: all 0.2s linear 0s;' }]);
+    var editTabText = createHTMLElement('div', 'EDIT', 'editTabText',
+        [{ n: 'style', v: textTabsStyle }]);
     editTab.appendChild(editTabText);
 
     tabs.append(addTab, editTab);
 
-    var addSection = createHTMLElement('div', null, 'addSection', [{ n: 'style', v: 'height:100%;width:100%;transition: all 0.2s linear 0s;' }]);
-    var addSectionTitle = createHTMLElement('h2', 'ADD CUSTOM BUTTON', null, [{ n: 'style', v: style + 'margin-top: 25px' }]);
-    var title = createHTMLElement('h3', 'Title', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
+    var addSection = createHTMLElement('div', null, 'addSection',
+        [{ n: 'style', v: 'height: calc(100% - 40px);width:100%;transition: all 0.2s linear 0s;display:flex; flex-direction: column;' }]);
+    var addSectionContents = createHTMLElement('div');
+    var addSectionTitle = createHTMLElement('h2', 'ADD CUSTOM BUTTON', null,
+        [{ n: 'style', v: style + 'margin-top: 25px' }]);
+    var title = createHTMLElement('h3', 'Title', null,
+        [{ n: 'style', v: style + 'margin-top: 20px' }]);
     var titleInput = createHTMLElement('input', null, 'titleInput', [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style }]);
-    var URLTitle = createHTMLElement('h3', 'Search URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
+    var URLTitle = createHTMLElement('h3', 'Search URL', null,
+        [{ n: 'style', v: style + 'margin-top: 20px' }]);
     var URLQm = createHTMLElement('img', null, 'URLQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
     var infoBoxStyle = 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;';
-    var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
+    var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox',
+        [{ n: 'style', v: infoBoxStyle }]);
     URLTitle.append(URLQm, URLInfoBox);
     var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
-    var iconTitle = createHTMLElement('h3', 'Icon URL', null, [{ n: 'style', v: style + 'margin-top: 20px' }]);
+    var iconTitle = createHTMLElement('h3', 'Icon URL', null,
+        [{ n: 'style', v: style + 'margin-top: 20px' }]);
     var iconQm = createHTMLElement('img', null, 'iconQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
-    var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox', [{ n: 'style', v: infoBoxStyle }]);
+    var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox',
+        [{ n: 'style', v: infoBoxStyle }]);
     iconInfoBox.innerHTML = '(<b>Leave empty for automatic icon parse</b>)<br />Link to icon for the button. <br />The easiest way to get it is to copy this link "https://www.google.com/s2/favicons?domain=" and place the website url at the end (example: https://www.google.com/s2/favicons?domain=myanimelist.net).';
     iconTitle.append(iconQm, iconInfoBox);
     var iconInput = createHTMLElement('input', null, 'iconInput', [{ n: 'placeholder', v: 'Icon URL' }, { n: 'style', v: style + 'width:80%' }]);
 
-    var msgBoxDiv = createHTMLElement('div', null, 'addMsgBox', [{ n: 'style', v: 'width: 86%;position: absolute;margin-left: 7%;bottom: 150%;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.4) 0px 0px 15px;text-align: center;transition: opacity 0.2s linear;opacity:0' }]);
-    var msgText = createHTMLElement('div', 'Button added succsessfully! Reload to see it!', 'addMgsText', [{ n: 'style', v: 'margin: 10px;' }]);
-    var reloadButton = createHTMLElement('button', 'RELOAD', 'reloadButton', [{ n: 'style', v: 'margin: 10px;margin-right:0px;width:90px;' }]);
-    var closeButton = createHTMLElement('button', 'CLOSE', 'closeButton', [{ n: 'style', v: 'margin: 10px;width:90px;' }]);
+    var msgBoxDiv = createHTMLElement('div', null, 'addMsgBox',
+        [{ n: 'style', v: 'width: 86%;position: absolute;margin-left: 7%;bottom: 150%;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.4) 0px 0px 15px;text-align: center;transition: opacity 0.2s linear;opacity:0' }]);
+    var msgText = createHTMLElement('div', 'Button added succsessfully! Reload to see it!', 'addMgsText',
+        [{ n: 'style', v: 'margin: 10px;' }]);
+    var reloadButton = createHTMLElement('button', 'RELOAD', 'reloadButton',
+        [{ n: 'style', v: 'margin: 10px;margin-right:0px;width:90px;' }]);
+    var closeButton = createHTMLElement('button', 'CLOSE', 'closeButton',
+        [{ n: 'style', v: 'margin: 10px;width:90px;' }]);
     msgBoxDiv.append(msgText, reloadButton, closeButton);
 
-    var buttonsDiv = createHTMLElement('div', null, 'addAndCancelButtons', [{ n: 'style', v: style + 'bottom:10px;position:absolute;width:100%' }]);
-    var addButton = createHTMLElement('button', 'ADD', 'addButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
-    var cancelButton = createHTMLElement('button', 'CANCEL', 'cancelButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
+    var buttonsDiv = createHTMLElement('div', null, 'addAndCancelButtons',
+        [{ n: 'style', v: style + 'margin-bottom: 10px;' }]);
+    var addButton = createHTMLElement('button', 'ADD', 'addButton',
+        [{ n: 'style', v: 'width:90px;margin:5px' }]);
+    var cancelButton = createHTMLElement('button', 'CANCEL', 'cancelButton',
+        [{ n: 'style', v: 'width:90px;margin:5px' }]);
 
-    var editSection = createHTMLElement('div', null, 'editSection', [{ n: 'style', v: 'height:100%;width:100%;display:none;transition: all 0.2s linear 0s;' }]);
-    var editSectionTitle = createHTMLElement('h2', 'EDIT CUSTOM BUTTONS', null, [{ n: 'style', v: style + 'margin-top: 25px' }]);
-    var animeButtonsList = createHTMLElement('ul', null, 'buttonsList', [{ n: 'style', v: 'list-style: none;margin-top: 25px;padding-left: 40px;overflow: hidden;overflow-y: auto;height: 340px;' }]);
+    var editSection = createHTMLElement('div', null, 'editSection',
+        [{ n: 'style', v: 'display: flex;flex-direction: column;height: calc(100% - 40px);width:100%;display:none;transition: all 0.2s linear 0s;' }]);
+    var editSectionTitle = createHTMLElement('h2', 'EDIT CUSTOM BUTTONS', null,
+        [{ n: 'style', v: style + 'margin-top: 25px' }]);
+    var animeButtonsList = createHTMLElement('ul', null, 'buttonsList',
+        [{ n: 'style', v: 'list-style: none;margin-top: 25px;padding-left: 40px;overflow: hidden;overflow-y: auto;flex: 1 1 auto;' }]);
     var animeButtons = document.querySelectorAll('.animeButton');
 
     var settingsDiv = createHTMLElement('div', null, 'settingsDiv', [{ n: 'style', v: 'padding: 0px 30px;' }]);
@@ -745,19 +773,34 @@ function addButtonPopup() {
     }
 
     var hideEditCheckboxLabel = createHTMLElement('label', 'Auto hide buttons (show on mouseover)', null, [{ n: 'for', v: 'editCheckbox' }, { n: 'style', v: 'padding-left:5px;' }]);
-    // var exportButton = createHTMLElement('div', 'Export custom buttons.');
-    // exportButton.addEventListener('click', exportCustomButtons);
-    settingsDiv.append(hideEditCheckbox, hideEditCheckboxLabel);
+    var exportButton = createHTMLElement('button', 'Export custom buttons.', null,
+        [{ n: 'style', v: 'padding: 4px;' }]);
+    exportButton.addEventListener('click', exportCustomButtons);
 
-    var editButtonsDiv = createHTMLElement('div', null, 'addAndCancelButtons', [{ n: 'style', v: style + 'bottom:10px;position:absolute;width:100%' }]);
-    var cancelButtonEdit = createHTMLElement('button', 'CLOSE', 'cancelButton', [{ n: 'style', v: 'width:90px;margin:5px' }]);
+    var imortExportDiv = createHTMLElement('div', null, null,
+        [{ n: 'style', v: 'display: flex;justify-content: space-evenly;margin: 7px 0;' }]);
+    var importInput = createHTMLElement('input', null, null,
+        [{ n: 'type', v: 'file' }, { n: 'accept', v: 'application/json' }, { n: 'style', v: 'display: none;' }]);
+    importInput.addEventListener('change', onImportChange);
+    var importButton = createHTMLElement('button', 'Import custom buttons.', null,
+        [{ n: 'style', v: 'padding: 4px;' }]);
+    importButton.addEventListener('click', () => { importInput.click(); });
+    imortExportDiv.append(exportButton, importButton, importInput);
+
+    settingsDiv.append(hideEditCheckbox, hideEditCheckboxLabel, imortExportDiv);
+
+    var editButtonsDiv = createHTMLElement('div', null, 'addAndCancelButtons',
+        [{ n: 'style', v: style + 'margin-bottom: 10px;' }]);
+    var cancelButtonEdit = createHTMLElement('button', 'CLOSE', 'cancelButton',
+        [{ n: 'style', v: 'width:90px;margin:5px' }]);
     editButtonsDiv.appendChild(cancelButtonEdit);
 
     createAndAppendEditListEntry(animeButtonsList, animeButtons);
 
     popUp.appendChild(tabs);
     buttonsDiv.append(addButton, cancelButton);
-    addSection.append(addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput, msgBoxDiv, buttonsDiv);
+    addSectionContents.append(addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput);
+    addSection.append(addSectionContents, msgBoxDiv, buttonsDiv);
 
     editSection.append(editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv);
 
@@ -778,12 +821,14 @@ function addButtonPopup() {
 
 function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
     animeButtons.forEach((b) => {
-        var listEl = createHTMLElement('li', null, b.id, [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
+        var listEl = createHTMLElement('li', null, b.id,
+            [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
         var imgUrl = b.firstElementChild.getAttribute('src');
         var img = createHTMLElement('img', null, null, [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
         var hideIcon = createHTMLElement('img', null, 'hideButton', [{ n: 'src', v: iconVisible }, { n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 82%;' }]);
         var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://www.flaticon.com/svg/static/icons/svg/1345/1345874.svg' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
-        var span = createHTMLElement('span', b.getAttribute('title'), null, [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
+        var span = createHTMLElement('span', b.getAttribute('title'), null,
+            [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
 
         if (b.style.display === 'none') {
             hideIcon.setAttribute('src', iconInvisible);
@@ -797,6 +842,18 @@ function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
         }
         animeButtonsList.appendChild(listEl);
     });
+}
+
+function onImportChange(e) {
+    var reader = new FileReader();
+    reader.readAsText(e.target.files[0]);
+    reader.onload = (e) => {
+        importCustomButtons(e.target.result);
+    };
+}
+
+function importCustomButtons(buttons) {
+    GM_setValue('setting:buttonsNames', buttons);
 }
 
 function exportCustomButtons() {
