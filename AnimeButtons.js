@@ -12,7 +12,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.800
+// @version     2.801
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -800,11 +800,11 @@ function addButtonPopup() {
     popUp.appendChild(tabs);
     buttonsDiv.append(addButton, cancelButton);
     addSectionContents.append(addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput);
-    addSection.append(addSectionContents, msgBoxDiv, buttonsDiv);
+    addSection.append(addSectionContents, buttonsDiv);
 
     editSection.append(editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv);
 
-    popUp.append(addSection, editSection);
+    popUp.append(addSection, editSection, msgBoxDiv);
     var html = getElement('html');
     html.appendChild(popUp);
 
@@ -854,6 +854,7 @@ function onImportChange(e) {
 
 function importCustomButtons(buttons) {
     GM_setValue('setting:buttonsNames', buttons);
+    toggleMsgBox(true, 'Import successful, reload the page for it to take effect.', true);
 }
 
 function exportCustomButtons() {
