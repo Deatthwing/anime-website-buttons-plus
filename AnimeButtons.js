@@ -12,11 +12,12 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.801
+// @version     2.811
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
 // @grant       GM_deleteValue
+// @grant       GM_addStyle
 // @grant       window.onurlchange
 // @namespace   https://greasyfork.org/users/18375
 // ==/UserScript==
@@ -36,12 +37,6 @@ var hideList = [];
 
 var buttDivLeft = 0;
 var autoHide = GM_getValue('setting:autoHide', false);
-
-var iconInvisible = 'https://www.flaticon.com/svg/static/icons/svg/565/565655.svg';
-var iconVisible = 'https://www.flaticon.com/svg/static/icons/svg/565/565654.svg';
-var arrowIcon = 'https://www.flaticon.com/svg/static/icons/svg/271/271228.svg';
-var editIcon = 'https://www.flaticon.com/svg/static/icons/svg/565/565722.svg';
-
 
 if (host === apHost) {
     headerQueryString = '#siteContainer h1';
@@ -152,7 +147,6 @@ function main() {
         return ref.textContent.replace('(TV)', '').trim();
     }
 
-
     function creteButton(icon, searchUrl, title, isStock) {
         var buttImg = createHTMLElement("img", null, null,
             [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;' }]);
@@ -195,9 +189,16 @@ function main() {
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
         nySearchUrl = `https://nyaa.si/?f=0&c=1_2&q=${animeName}`;
 
-        return [{ name: malTitle, url: malSearchUrl }, { name: alTitle, url: alSearchUrl },
-        { name: apTitle, url: apSearchUrl }, { name: kTitle, url: kSearchUrl }, { name: adTitle, url: adSearchUrl },
-        { name: ytTitle, url: ytSearchUrl }, { name: gTitle, url: gSearchUrl }, { name: nyTitle, url: nySearchUrl }];
+        return [
+            { name: malTitle, url: malSearchUrl },
+            { name: alTitle, url: alSearchUrl },
+            { name: apTitle, url: apSearchUrl },
+            { name: kTitle, url: kSearchUrl },
+            { name: adTitle, url: adSearchUrl },
+            { name: ytTitle, url: ytSearchUrl },
+            { name: gTitle, url: gSearchUrl },
+            { name: nyTitle, url: nySearchUrl }
+        ];
     }
 
     setSearchURLs();
@@ -252,26 +253,24 @@ function main() {
     //Edit button
     var ebTitle = "Edit Custom Buttons";
 
-    var arrowButtonImg = createHTMLElement('img', null, 'arrowButton', [{ n: 'src', v: arrowIcon }, { n: 'title', v: ebTitle },
-    { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
+    var arrowButtonIcon = createHTMLElement('i', null, 'arrowButton fa fa-angle-right', [{ n: 'title', v: ebTitle },
+    { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
 
-    var editButtonImg = createHTMLElement('img', null, 'editButton', [{ n: 'src', v: editIcon }, { n: 'title', v: ebTitle },
-    { n: 'style', v: 'width:16px;height:16px;transition: all 0.3s linear 0s;opacity:0;' }]);
+    var editButtonIcon = createHTMLElement('i', null, 'editButton fa fa-edit', [{ n: 'title', v: ebTitle },
+    { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;opacity:0;' }]);
 
     var editButton = createHTMLElement('div', null, null,
         [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
 
     if (!autoHide) {
-        editButtonImg.style.opacity = '1';
-        arrowButtonImg.style.opacity = '0';
+        editButtonIcon.style.opacity = '1';
+        arrowButtonIcon.style.opacity = '0';
     }
 
     addHeaderEventListeners();
 
-    editButton.append(editButtonImg, arrowButtonImg);
-
+    editButton.append(editButtonIcon, arrowButtonIcon);
     editButton.addEventListener('click', () => { togglePopup(true); });
-
 
     var customButtons = [];
     var customButtonsObj = [];
@@ -296,11 +295,12 @@ function main() {
         customButtons.push(creteButton(b.icon, b.url.replace('ANIMENAME', animeName), b.title));
     });
 
-
     //Add Website Buttons
     if (host === apHost) {
         appendButtons([malButton, alButton, kButton, adButton]);
         outerButtonsDiv.style.top = '6px';
+        arrowButtonIcon.style.verticalAlign = '';
+        editButtonIcon.style.verticalAlign = '';
     }
     else if (host === alHost) {
         appendButtons([malButton, apButton, kButton, adButton]);
@@ -313,6 +313,8 @@ function main() {
     else if (host === kHost) {
         appendButtons([malButton, apButton, alButton, adButton]);
         outerButtonsDiv.style.top = '2px';
+        arrowButtonIcon.style.verticalAlign = '';
+        editButtonIcon.style.verticalAlign = '';
     }
     else if (host === adHost) {
         appendButtons([malButton, apButton, alButton, kButton]);
@@ -349,6 +351,8 @@ function main() {
         hideEditButton();
     }
 
+    var fontAwesome = '@import url("https://use.fontawesome.com/releases/v5.15.2/css/all.css");';
+    GM_addStyle(fontAwesome);
 }
 
 
@@ -449,10 +453,6 @@ function addAndCancelButtonsHandler(e) {
         addButtonLogic(GM_listValues());
     }
     else if (targetEl.className === 'cancelButton') {
-        togglePopup(false);
-    }
-    else if (targetEl.className === 'deleteButton') {
-        GM_deleteValue(getElement('.titleInput').value);
         togglePopup(false);
     }
 }
@@ -610,7 +610,7 @@ function hideAndDeleteHandler(e) {
     var buttParent = target.parentElement;
     var button = getElement(`#${buttParent.className}`);
 
-    if (target.className === "removeButton") {
+    if (target.classList.contains('removeButton')) {
         button.remove();
         target.parentElement.remove();
         var buttonsObjs = getAnimeButtonsFromStorage();
@@ -620,16 +620,18 @@ function hideAndDeleteHandler(e) {
 
         GM_setValue('setting:hideList', JSON.stringify(hideList));
     }
-    else if (target.className === 'hideButton') {
+    else if (target.classList.contains('hideButton')) {
         if (button.style.display === 'none') {
             button.style.display = '';
             concatHideList([{ bId: button.id, h: 'show' }]);
-            target.setAttribute('src', iconVisible);
+            target.classList.replace('fa-eye-slash', 'fa-eye');
+            // target.setAttribute('src', iconVisible);
         }
         else {
             button.style.display = 'none';
             concatHideList([{ bId: button.id, h: 'hide' }]);
-            target.setAttribute('src', iconInvisible);
+            target.classList.replace('fa-eye', 'fa-eye-slash');
+            // target.setAttribute('src', iconInvisible);
         }
 
         GM_setValue('setting:hideList', JSON.stringify(hideList));
@@ -725,7 +727,7 @@ function addButtonPopup() {
     var titleInput = createHTMLElement('input', null, 'titleInput', [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style }]);
     var URLTitle = createHTMLElement('h3', 'Search URL', null,
         [{ n: 'style', v: style + 'margin-top: 20px' }]);
-    var URLQm = createHTMLElement('img', null, 'URLQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
+    var URLQm = createHTMLElement('i', null, 'URLQuestionmark questionmark fa fa-question-circle', [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
     var infoBoxStyle = 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;';
     var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox',
         [{ n: 'style', v: infoBoxStyle }]);
@@ -733,7 +735,7 @@ function addButtonPopup() {
     var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
     var iconTitle = createHTMLElement('h3', 'Icon URL', null,
         [{ n: 'style', v: style + 'margin-top: 20px' }]);
-    var iconQm = createHTMLElement('img', null, 'iconQuestionmark questionmark', [{ n: 'src', v: questionmarkIcon }, { n: 'style', v: 'heaight:16px;width:16px;margin-left:5px;' }]);
+    var iconQm = createHTMLElement('i', null, 'iconQuestionmark questionmark fa fa-question-circle', [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
     var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox',
         [{ n: 'style', v: infoBoxStyle }]);
     iconInfoBox.innerHTML = '(<b>Leave empty for automatic icon parse</b>)<br />Link to icon for the button. <br />The easiest way to get it is to copy this link "https://www.google.com/s2/favicons?domain=" and place the website url at the end (example: https://www.google.com/s2/favicons?domain=myanimelist.net).';
@@ -797,14 +799,13 @@ function addButtonPopup() {
 
     createAndAppendEditListEntry(animeButtonsList, animeButtons);
 
-    popUp.appendChild(tabs);
     buttonsDiv.append(addButton, cancelButton);
     addSectionContents.append(addSectionTitle, title, titleInput, URLTitle, URLInput, iconTitle, iconInput);
     addSection.append(addSectionContents, buttonsDiv);
 
     editSection.append(editSectionTitle, animeButtonsList, settingsDiv, editButtonsDiv);
 
-    popUp.append(addSection, editSection, msgBoxDiv);
+    popUp.append(tabs, addSection, editSection, msgBoxDiv);
     var html = getElement('html');
     html.appendChild(popUp);
 
@@ -825,13 +826,13 @@ function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
             [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
         var imgUrl = b.firstElementChild.getAttribute('src');
         var img = createHTMLElement('img', null, null, [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
-        var hideIcon = createHTMLElement('img', null, 'hideButton', [{ n: 'src', v: iconVisible }, { n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 82%;' }]);
-        var removeIcon = createHTMLElement('img', null, 'removeButton', [{ n: 'src', v: 'https://www.flaticon.com/svg/static/icons/svg/1345/1345874.svg' }, { n: 'title', v: 'DELETE' }, { n: 'style', v: 'height:16px;width:16px;position: relative;left: 85%;' }]);
+        var hideIcon = createHTMLElement('i', null, 'hideButton fa fa-eye', [{ n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'font-size:16px;position: relative;left: 82%;' }]);
+        var removeIcon = createHTMLElement('i', null, 'removeButton fa fa-trash-alt', [{ n: 'title', v: 'DELETE' }, { n: 'style', v: 'font-size:16px;position: relative;left: 85%;' }]);
         var span = createHTMLElement('span', b.getAttribute('title'), null,
             [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
 
         if (b.style.display === 'none') {
-            hideIcon.setAttribute('src', iconInvisible);
+            hideIcon.classList.replace('fa-eye', 'fa-eye-slash');
         }
 
         listEl.append(img, hideIcon, span);
@@ -840,6 +841,7 @@ function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
             listEl.insertBefore(removeIcon, span);
             span.style.right = '32px';
         }
+
         animeButtonsList.appendChild(listEl);
     });
 }
