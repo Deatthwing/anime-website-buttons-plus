@@ -4,6 +4,8 @@
 // @include     https://www.anime-planet.com/anime/*
 // @include     http://myanimelist.net/anime/*
 // @include     https://myanimelist.net/anime/*
+// @include     http://myanimelist.net/manga/*
+// @include     https://myanimelist.net/manga/*
 // @include     https://anilist.co/*
 // @include     https://kitsu.io/*
 // @include     https://anidb.net/anime/*
@@ -12,7 +14,7 @@
 // @exclude     https://www.anime-planet.com/anime/recommendations/*
 // @exclude     https://myanimelist.net/anime/producer*
 // @description A script that adds buttons on Anime Planet, MAL, Kitsu, Anilist and aniDB for searching various sites.
-// @version     2.812
+// @version     2.820
 // @grant       GM_setValue
 // @grant       GM_getValue
 // @grant       GM_listValues
@@ -44,7 +46,13 @@ if (host === apHost) {
     main();
 }
 else if (host === malHost) {
-    headerQueryString = 'h1.title-name strong';
+    if (location.pathname.includes('/anime/')) {
+        headerQueryString = 'h1.title-name strong';
+    }
+    else {
+        headerQueryString = '.h1-title span';
+    }
+
     header = getElement(headerQueryString);
     main();
 }
@@ -87,7 +95,15 @@ function main() {
     var animeName;
     var reff;
 
-    if (host === apHost || host === malHost) {
+    if (host === malHost) {
+        if (location.pathname.includes('/anime/')) {
+            animeName = getAnimeName();
+        }
+        else {
+            animeName = getAnimeName(header.firstChild);
+        }
+    }
+    else if (host === apHost) {
         animeName = getAnimeName();
     }
     else if (host === adHost) {
@@ -189,7 +205,12 @@ function main() {
         ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer`;
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
         nySearchUrl = `https://nyaa.si/?f=0&c=1_2&q=${animeName}`;
-        ampSearchUrl = `https://animixplay.to${location.pathname}`;
+        if (host === malHost && location.pathname.includes('/anime/')) {
+            ampSearchUrl = `https://animixplay.to${location.pathname}`;
+        }
+        else {
+            ampSearchUrl = `https://animixplay.to/?q=${animeName}&sengine=mal`;
+        }
 
         return [
             { name: malTitle, url: malSearchUrl },
@@ -254,7 +275,13 @@ function main() {
 
 
     //AniMixPlay button
-    var ampTitle = "Go to AniMixPlay";
+    var ampTitle;
+    if (host === malHost && location.pathname.includes('/anime/')) {
+        ampTitle = "Go to AniMixPlay";
+    }
+    else {
+        ampTitle = "Search AniMixPlay";
+    }
 
     var ampButton = creteButton(icon, ampSearchUrl, ampTitle, true);
 
@@ -262,11 +289,13 @@ function main() {
     //Edit button
     var ebTitle = "Edit Custom Buttons";
 
-    var arrowButtonIcon = createHTMLElement('i', null, 'arrowButton fa fa-angle-right', [{ n: 'title', v: ebTitle },
-    { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
+    var arrowButtonIcon = createHTMLElement('i', null, 'arrowButton fa fa-angle-right',
+        [{ n: 'title', v: ebTitle },
+        { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;left:-18px;position: relative;' }]);
 
-    var editButtonIcon = createHTMLElement('i', null, 'editButton fa fa-edit', [{ n: 'title', v: ebTitle },
-    { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;opacity:0;' }]);
+    var editButtonIcon = createHTMLElement('i', null, 'editButton fa fa-edit',
+        [{ n: 'title', v: ebTitle },
+        { n: 'style', v: 'font-size:16px;vertical-align: text-top;transition: all 0.3s linear 0s;opacity:0;' }]);
 
     var editButton = createHTMLElement('div', null, null,
         [{ n: 'style', v: 'width:16px;height:16px;margin-right:2px;display:inline;' }]);
@@ -619,7 +648,7 @@ function hideAndDeleteHandler(e) {
     var buttParent = target.parentElement;
     var button = getElement(`#${buttParent.className}`);
 
-    if (target.classList.contains('removeButton')) {
+    if (target.classList.contains('removeButton') && !target.classList.contains('disabled')) {
         button.remove();
         target.parentElement.remove();
         var buttonsObjs = getAnimeButtonsFromStorage();
@@ -703,8 +732,6 @@ function showInfoBox(infoBox) {
 }
 
 function addButtonPopup() {
-    var questionmarkIcon = 'https://www.flaticon.com/svg/static/icons/svg/1828/1828940.svg';
-
     var style = 'margin:auto;text-align: center;display:block;margin-bottom: 5px;';
     var popUp = createHTMLElement('div', null, 'buttonPopup',
         [{ n: 'style', v: 'position:fixed;top:-100%;left:50%;transform: translate(-50%, -50%);background-color:white;width:400px;height:560px;box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);border-radius: 8px;font-size:medium;z-index:9999;opacity:0;transition: all 0.7s cubic-bezier(0.45, -0.24, 0.43, 1.14) 0s;' }]);
@@ -733,23 +760,28 @@ function addButtonPopup() {
         [{ n: 'style', v: style + 'margin-top: 25px' }]);
     var title = createHTMLElement('h3', 'Title', null,
         [{ n: 'style', v: style + 'margin-top: 20px' }]);
-    var titleInput = createHTMLElement('input', null, 'titleInput', [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style }]);
+    var titleInput = createHTMLElement('input', null, 'titleInput',
+        [{ n: 'placeholder', v: 'Button title' }, { n: 'style', v: style + 'width:80%' }]);
     var URLTitle = createHTMLElement('h3', 'Search URL', null,
         [{ n: 'style', v: style + 'margin-top: 20px' }]);
-    var URLQm = createHTMLElement('i', null, 'URLQuestionmark questionmark fa fa-question-circle', [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
+    var URLQm = createHTMLElement('i', null, 'URLQuestionmark questionmark fa fa-question-circle',
+        [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
     var infoBoxStyle = 'width: 90%;display: inline-block;position: absolute;margin-left: 10px;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.3) 0px 0px 10px;transition: opacity 0.3s linear;opacity: 0;padding: 10px;font-weight: normal;font-size: medium;';
     var URLInfoBox = createHTMLElement('div', 'To get the search URL first go the site you want to add and search the term "ANIMENAME" in the search field. Then copy the full URL (including http://) in the field below. (exaple: https://myanimelist.net/search/all?q=ANIMENAME)', 'URLInfoBox infoBox',
         [{ n: 'style', v: infoBoxStyle }]);
     URLTitle.append(URLQm, URLInfoBox);
-    var URLInput = createHTMLElement('input', null, 'URLInput', [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
+    var URLInput = createHTMLElement('input', null, 'URLInput',
+        [{ n: 'placeholder', v: 'Search URL' }, { n: 'style', v: style + 'width:80%' }]);
     var iconTitle = createHTMLElement('h3', 'Icon URL', null,
         [{ n: 'style', v: style + 'margin-top: 20px' }]);
-    var iconQm = createHTMLElement('i', null, 'iconQuestionmark questionmark fa fa-question-circle', [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
+    var iconQm = createHTMLElement('i', null, 'iconQuestionmark questionmark fa fa-question-circle',
+        [{ n: 'style', v: 'font-size:16px;margin-left:5px;' }]);
     var iconInfoBox = createHTMLElement('div', null, 'iconInfoBox infoBox',
         [{ n: 'style', v: infoBoxStyle }]);
     iconInfoBox.innerHTML = '(<b>Leave empty for automatic icon parse</b>)<br />Link to icon for the button. <br />The easiest way to get it is to copy this link "https://www.google.com/s2/favicons?domain=" and place the website url at the end (example: https://www.google.com/s2/favicons?domain=myanimelist.net).';
     iconTitle.append(iconQm, iconInfoBox);
-    var iconInput = createHTMLElement('input', null, 'iconInput', [{ n: 'placeholder', v: 'Icon URL' }, { n: 'style', v: style + 'width:80%' }]);
+    var iconInput = createHTMLElement('input', null, 'iconInput',
+        [{ n: 'placeholder', v: 'Icon URL' }, { n: 'style', v: style + 'width:80%' }]);
 
     var msgBoxDiv = createHTMLElement('div', null, 'addMsgBox',
         [{ n: 'style', v: 'width: 86%;position: absolute;margin-left: 7%;bottom: 150%;background-color: white;border-radius: 8px;box-shadow: rgba(0,0,0, 0.4) 0px 0px 15px;text-align: center;transition: opacity 0.2s linear;opacity:0' }]);
@@ -776,14 +808,17 @@ function addButtonPopup() {
         [{ n: 'style', v: 'list-style: none;margin-top: 25px;padding-left: 40px;overflow: hidden;overflow-y: auto;flex: 1 1 auto;' }]);
     var animeButtons = document.querySelectorAll('.animeButton');
 
-    var settingsDiv = createHTMLElement('div', null, 'settingsDiv', [{ n: 'style', v: 'padding: 0px 30px;' }]);
-    var hideEditCheckbox = createHTMLElement('input', null, 'editCheckbox', [{ n: 'id', v: 'editCheckbox' }, { n: 'type', v: 'checkbox' }, { n: 'value', v: 'editCheckbox' }]);
+    var settingsDiv = createHTMLElement('div', null, 'settingsDiv',
+        [{ n: 'style', v: 'padding: 0px 30px;' }]);
+    var hideEditCheckbox = createHTMLElement('input', null, 'editCheckbox',
+        [{ n: 'id', v: 'editCheckbox' }, { n: 'type', v: 'checkbox' }, { n: 'value', v: 'editCheckbox' }]);
 
     if (autoHide) {
         hideEditCheckbox.setAttribute('checked', true);
     }
 
-    var hideEditCheckboxLabel = createHTMLElement('label', 'Auto hide buttons (show on mouseover)', null, [{ n: 'for', v: 'editCheckbox' }, { n: 'style', v: 'padding-left:5px;' }]);
+    var hideEditCheckboxLabel = createHTMLElement('label', 'Auto hide buttons (show on mouseover)', null,
+        [{ n: 'for', v: 'editCheckbox' }, { n: 'style', v: 'padding-left:5px;' }]);
     var exportButton = createHTMLElement('button', 'Export custom buttons.', null,
         [{ n: 'style', v: 'padding: 4px;' }]);
     exportButton.addEventListener('click', exportCustomButtons);
@@ -832,23 +867,26 @@ function addButtonPopup() {
 function createAndAppendEditListEntry(animeButtonsList, animeButtons) {
     animeButtons.forEach((b) => {
         var listEl = createHTMLElement('li', null, b.id,
-            [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;' }]);
+            [{ n: 'style', v: 'width:90%;margin-top:5px;border-bottom-style: inset;border-bottom-width: thin;display:flex;' }]);
         var imgUrl = b.firstElementChild.getAttribute('src');
-        var img = createHTMLElement('img', null, null, [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
-        var hideIcon = createHTMLElement('i', null, 'hideButton fa fa-eye', [{ n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'font-size:16px;position: relative;left: 82%;' }]);
-        var removeIcon = createHTMLElement('i', null, 'removeButton fa fa-trash-alt', [{ n: 'title', v: 'DELETE' }, { n: 'style', v: 'font-size:16px;position: relative;left: 85%;' }]);
+        var img = createHTMLElement('img', null, null,
+            [{ n: 'src', v: imgUrl }, { n: 'style', v: 'width: 16px;height: 16px;' }]);
         var span = createHTMLElement('span', b.getAttribute('title'), null,
-            [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;right: 16px;' }]);
+            [{ n: 'style', v: 'margin-left:5px;bottom: 2px;position: relative;flex: 1 1 0;' }]);
+        var hideIcon = createHTMLElement('i', null, 'hideButton fa fa-eye',
+            [{ n: 'title', v: 'Toggle Hide' }, { n: 'style', v: 'font-size:16px;position: relative;margin: 0 10px;' }]);
+        var removeIcon = createHTMLElement('i', null, 'removeButton fa fa-trash-alt',
+            [{ n: 'title', v: 'DELETE' }, { n: 'style', v: 'font-size:16px;position: relative;' }]);
 
         if (b.style.display === 'none') {
             hideIcon.classList.replace('fa-eye', 'fa-eye-slash');
         }
 
-        listEl.append(img, hideIcon, span);
+        listEl.append(img, span, hideIcon, removeIcon);
 
-        if (!b.className.includes('stockButton')) {
-            listEl.insertBefore(removeIcon, span);
-            span.style.right = '32px';
+        if (b.className.includes('stockButton')) {
+            removeIcon.style.color = 'lightgray';
+            removeIcon.classList.add('disabled');
         }
 
         animeButtonsList.appendChild(listEl);
