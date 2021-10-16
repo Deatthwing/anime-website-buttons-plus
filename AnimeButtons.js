@@ -178,6 +178,7 @@ function main() {
     var ytSearchUrl;
     var gSearchUrl;
     var nySearchUrl;
+    var ampSearchUrl;
 
     function setSearchURLs() {
         malSearchUrl = `http://myanimelist.net/anime.php?q=${animeName}`;
@@ -188,6 +189,7 @@ function main() {
         ytSearchUrl = `https://www.youtube.com/results?search_query=${animeName} trailer`;
         gSearchUrl = `https://google.com/search?tbm=isch&biw=&bih=&gbv=2&q=${animeName}`;
         nySearchUrl = `https://nyaa.si/?f=0&c=1_2&q=${animeName}`;
+        ampSearchUrl = `https://animixplay.to${location.pathname}`;
 
         return [
             { name: malTitle, url: malSearchUrl },
@@ -197,7 +199,8 @@ function main() {
             { name: adTitle, url: adSearchUrl },
             { name: ytTitle, url: ytSearchUrl },
             { name: gTitle, url: gSearchUrl },
-            { name: nyTitle, url: nySearchUrl }
+            { name: nyTitle, url: nySearchUrl },
+            { name: ampTitle, url: ampSearchUrl }
         ];
     }
 
@@ -248,6 +251,12 @@ function main() {
     var nyTitle = "Search Nyaa";
 
     var nyButton = creteButton(icon, nySearchUrl, nyTitle, true);
+
+
+    //AniMixPlay button
+    var ampTitle = "Go to AniMixPlay";
+
+    var ampButton = creteButton(icon, ampSearchUrl, ampTitle, true);
 
 
     //Edit button
@@ -324,7 +333,7 @@ function main() {
     function appendButtons(mainButtonsArray) {
         header.appendChild(document.createTextNode(" "));
 
-        var allButtonsArray = mainButtonsArray.concat([ytButton, giButton, nyButton], customButtons, editButton);
+        var allButtonsArray = mainButtonsArray.concat([ytButton, giButton, nyButton, ampButton], customButtons, editButton);
         var buttonsDiv = createHTMLElement('div', null, 'animeButtons',
             [{ n: 'style', v: 'position:relative;transition: all 0.4s cubic-bezier(0.79, 0.88, 0.16, 0.98) 0s;' }]);
         outerButtonsDiv = createHTMLElement('div', null, null,
